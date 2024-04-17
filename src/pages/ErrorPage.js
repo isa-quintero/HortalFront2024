@@ -6,9 +6,9 @@ const ErrorPage = () => {
     <Wrapper className='page-100'>
       <section>
         <h1>404</h1>
-        <h3>Sorry, the page you tried cannot be found</h3>
+        <h3>Lo sentimos, la página a la que ha intentado entrar no se encontró</h3>
         <Link to='/' className='btn'>
-          back home
+          volver a inicio
         </Link>
       </section>
     </Wrapper>
