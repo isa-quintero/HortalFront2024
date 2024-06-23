@@ -13,6 +13,13 @@ import {
   AuthWrapper,
   Home,
 } from './pages';
+import { Magic } from 'magic-sdk';
+import { OAuthExtension } from '@magic-ext/oauth';
+
+const magic = new Magic('PUBLISHABLE_API_KEY', {
+  extensions: [new OAuthExtension()],
+});
+
 function App() {
   return (
     <AuthWrapper>
