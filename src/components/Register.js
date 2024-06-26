@@ -1,7 +1,58 @@
-// src/components/FormComponent.js
 import React, { useState } from 'react';
+import styled from 'styled-components';
 
-const Register = ({ onSubmit }) => {
+const RegisterForm = styled.form`
+  background-color: #f7f7f7;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const Select = styled.select`
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const Button = styled.button`
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.h2`
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+`;
+
+const Register = () => {
   const [role, setRole] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
@@ -9,45 +60,47 @@ const Register = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ role, city, address, phone });
+    // Lógica para enviar el formulario
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <RegisterForm onSubmit={handleSubmit}>
       <div>
-        <label>Rol:</label>
-        <input
-          type="text"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        />
+        <Label>Rol:</Label>
+        <Select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="">Seleccionar un rol</option>
+          <option value="cliente">Cliente</option>
+          <option value="Agricultor">Agricultor</option>
+          <option value="Asociacion">Asociación</option>
+        </Select>
       </div>
       <div>
-        <label>Ciudad:</label>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Dirección:</label>
-        <input
+        <Label>Dirección:</Label>
+        <Input
           type="text"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
+          placeholder="(Ejm: Calle/Carrera 45 #29-35)"
         />
       </div>
       <div>
-        <label>Número de Teléfono:</label>
-        <input
+        <Label>Ciudad:</Label>
+        <Select value={city} onChange={(e) => setCity(e.target.value)}>
+          <option value="">Seleccionar ciudad</option>
+          {/* Agrega más opciones según sea necesario */}
+        </Select>
+      </div>
+      <div>
+        <Label>Celular:</Label>
+        <Input
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
+          placeholder="(Ejm: Calle/Carrera 45 #29-35)"
         />
       </div>
-      <button type="submit">Enviar</button>
-    </form>
+      <Button type="submit">Login</Button>
+    </RegisterForm>
   );
 };
 
