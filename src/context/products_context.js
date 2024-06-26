@@ -40,23 +40,28 @@ export const ProductsProvider = ({ children }) => {
     dispatch({ type: GET_PRODUCTS_BEGIN })
     try {
       const response = await axios.get(url)
+      console.log('Fetch Products Response:', response)  // Log the response
       const products = response.data
       dispatch({ type: GET_PRODUCTS_SUCCESS, payload: products })
     } catch (error) {
+      console.error('Error fetching products:', error)  // Log the error
       dispatch({ type: GET_PRODUCTS_ERROR })
     }
   }
+  
   const fetchSingleProduct = async (url) => {
     dispatch({ type: GET_SINGLE_PRODUCT_BEGIN })
     try {
       const response = await axios.get(url)
+      console.log('Fetch Single Product Response:', response)  // Log the response
       const singleProduct = response.data
       dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: singleProduct })
     } catch (error) {
+      console.error('Error fetching single product:', error)  // Log the error
       dispatch({ type: GET_SINGLE_PRODUCT_ERROR })
     }
   }
-
+  
   useEffect(() => {
     fetchProducts(url)
   }, [])

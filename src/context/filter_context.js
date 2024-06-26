@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useReducer } from 'react'
+import axios from 'axios'
 import reducer from '../reducers/filter_reducer'
 import {
   LOAD_PRODUCTS,
@@ -19,7 +20,7 @@ const initialState = {
   sort: 'price-lowest',
   filters: {
     text: '',
-    company: 'all',
+
     category: 'all',
     color: 'all',
     min_price: 0,
@@ -35,14 +36,35 @@ export const FilterProvider = ({ children }) => {
   const { products } = useProductsContext()
   const [state, dispatch] = useReducer(reducer, initialState)
   useEffect(() => {
-    dispatch({ type: LOAD_PRODUCTS, payload: products })
-  }, [products])
+    const fetchProductsAndOffers = async () => {
+      try {
+        const [productsRes, offersRes] = await Promise.all([
+          axios.get('http://localhost:8080/inventory/products'),
+          axios.get('http://localhost:8080/inventory/offers')
+        ]);
+
+        const products = productsRes.data;
+        const offers = offersRes.data;
+
+        const productsWithOffers = products.map(product => {
+          return {
+            ...product,
+            offers: offers.filter(offer => offer.productId === product.id)
+          }
+        })
+
+        dispatch({ type: LOAD_PRODUCTS, payload: productsWithOffers })
+      } catch (err) {
+        console.error('Error fetching products and offers:', err)
+      }
+    }
+    fetchProductsAndOffers();
+  }, []);
 
   useEffect(() => {
     dispatch({ type: FILTER_PRODUCTS })
     dispatch({ type: SORT_PRODUCTS })
-  }, [state.sort, state.filters])
-  // functions
+  }, [state.sort, state.filters, products])
   const setGridView = () => {
     dispatch({ type: SET_GRIDVIEW })
   }
@@ -50,8 +72,6 @@ export const FilterProvider = ({ children }) => {
     dispatch({ type: SET_LISTVIEW })
   }
   const updateSort = (e) => {
-    // just for demonstration;
-    // const name = e.target.name
     const value = e.target.value
     dispatch({ type: UPDATE_SORT, payload: value })
   }
@@ -90,7 +110,6 @@ export const FilterProvider = ({ children }) => {
     </FilterContext.Provider>
   )
 }
-// make sure use
 export const useFilterContext = () => {
   return useContext(FilterContext)
 }

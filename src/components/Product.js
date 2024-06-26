@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { formatPrice } from '../utils/helpers'
 import { FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-const Product = ({ image, name, price, id }) => {
+const Product = ({ id, image, name, price, offers }) => {
   return (
     <Wrapper>
       <div className='container'>
@@ -16,6 +16,16 @@ const Product = ({ image, name, price, id }) => {
         <h5>{name}</h5>
         <p>{formatPrice(price)}</p>
       </footer>
+      {offers && offers.length > 0 && (
+        <div>
+          <h5>Ofertas:</h5>
+          <ul>
+            {offers.map((offer) => (
+              <li key={offer.id}>{offer.description}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </Wrapper>
   )
 }
@@ -69,7 +79,6 @@ const Wrapper = styled.article`
     margin-bottom: 0;
     font-weight: 400;
   }
-
   footer p {
     color: var(--clr-primary-5);
     letter-spacing: var(--spacing);

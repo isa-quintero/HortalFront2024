@@ -50,7 +50,6 @@ const SingleProductPage = () => {
     stars,
     reviews,
     id: sku,
-    company,
     images,
   } = product;
   return (
@@ -77,7 +76,6 @@ const SingleProductPage = () => {
             </p>
             <p className='info'>
               <span>Brand :</span>
-              {company}
             </p>
             <hr />
             {stock > 0 && <AddToCart product={product} />}

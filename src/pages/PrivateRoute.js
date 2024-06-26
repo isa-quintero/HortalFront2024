@@ -1,12 +1,15 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useMagicContext } from '../context/magic_context';
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth0();
-  if (!user) {
-    return <Navigate to='/' />;
+  const { user, isLoading } = useMagicContext();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-  return children;
+
+  return user ? children : <Navigate to="/login" />;
 };
+
 export default PrivateRoute;

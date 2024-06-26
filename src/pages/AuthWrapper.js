@@ -1,30 +1,21 @@
-import React from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
-import styled from 'styled-components'
-function AuthWrapper({ children }) {
-  const { isLoading, error } = useAuth0()
+import React, { useEffect, useState } from 'react'
+import { useMagicContext } from '../context/magic_context';
 
-  if (isLoading) {
-    return (
-      <Wrapper>
-        <h1>Loading....</h1>
-      </Wrapper>
-    )
-  }
-  if (error) {
-    return (
-      <Wrapper>
-        <h1>{error.message}</h1>
-      </Wrapper>
-    )
-  }
-  return <>{children}</>
-}
+const AuthWrapper = ({ children }) => {
+  const { isLoading } = useMagicContext();
+  const [isReady, setIsReady] = useState(false);
 
-const Wrapper = styled.section`
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-`
+  useEffect(() => {
+    if (!isLoading) {
+      setIsReady(true);
+    }
+  }, [isLoading]);
+
+  if (!isReady) {
+    return <div>Loading...</div>;
+  }
+
+  return children;
+};
 
 export default AuthWrapper

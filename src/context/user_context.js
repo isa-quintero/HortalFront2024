@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useMagicContext } from '../context/magic_context' // Importa el contexto de Magic
 
 const UserContext = React.createContext()
 export const UserProvider = ({ children }) => {
-  const { loginWithRedirect, logout, user, isLoading, error } = useAuth0()
+  const { loginWithRedirect, logout, user, isLoading, error } = useMagicContext() // Usa el contexto de Magic
   const [myUser, setMyUser] = useState(null)
 
   useEffect(() => {
@@ -11,14 +11,13 @@ export const UserProvider = ({ children }) => {
   }, [user])
 
   return (
-    <UserContext.Provider
+    <UserContext.Provider 
       value={{ loginWithRedirect, logout, myUser, isLoading, error }}
-    >
+      >
       {children}
     </UserContext.Provider>
   )
 }
-// make sure use
 export const useUserContext = () => {
   return useContext(UserContext)
 }

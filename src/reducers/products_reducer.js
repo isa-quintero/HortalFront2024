@@ -42,10 +42,20 @@ const products_reducer = (state, action) => {
     }
   }
   if (action.type === GET_SINGLE_PRODUCT_SUCCESS) {
+    // Aquí puedes manipular las ofertas si es necesario
+    const product = action.payload
+    // Por ejemplo, podrías asegurarte de que las ofertas estén en el formato correcto
+    if (product.offers) {
+      product.offers = product.offers.map((offer) => ({
+        ...offer,
+        initialDate: new Date(offer.initialDate),
+        finalDate: new Date(offer.finalDate),
+      }))
+    }
     return {
       ...state,
       single_product_loading: false,
-      single_product: action.payload,
+      single_product: product,
     }
   }
   if (action.type === GET_SINGLE_PRODUCT_ERROR) {

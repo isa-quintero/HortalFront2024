@@ -1,8 +1,8 @@
+// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar, Sidebar, Footer } from './components';
 import {
-  
   SingleProduct,
   Cart,
   Checkout,
@@ -12,13 +12,8 @@ import {
   PrivateRoute,
   AuthWrapper,
   Home,
+  OAuthLogin,
 } from './pages';
-import { Magic } from 'magic-sdk';
-import { OAuthExtension } from '@magic-ext/oauth';
-
-const magic = new Magic('PUBLISHABLE_API_KEY', {
-  extensions: [new OAuthExtension()],
-});
 
 function App() {
   return (
@@ -40,6 +35,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path='login' element={<OAuthLogin />} />
           <Route path='*' element={<Error />} />
         </Routes>
         <Footer />

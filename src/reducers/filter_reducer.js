@@ -11,7 +11,12 @@ import {
 
 const filter_reducer = (state, action) => {
   if (action.type === LOAD_PRODUCTS) {
-    let maxPrice = action.payload.map((p) => p.price)
+    // Extraer todos los precios, tanto del producto como de sus ofertas
+    let maxPrice = action.payload.map((p) => {
+      let offerPrices = p.offers ? p.offers.map(o => o.price) : []
+      return [p.price, ...offerPrices]
+    }).flat()
+
     maxPrice = Math.max(...maxPrice)
     return {
       ...state,
@@ -31,38 +36,24 @@ const filter_reducer = (state, action) => {
   }
   if (action.type === SORT_PRODUCTS) {
     const { sort, filtered_products } = state
-    let tempProducts = []
+    let tempProducts = [...filtered_products]
     if (sort === 'price-lowest') {
-      tempProducts = filtered_products.sort((a, b) => {
-        // if (a.price < b.price) {
-        //   return -1
-        // }
-        // if (a.price > b.price) {
-        //   return 1
-        // }
-        // return 0
-        return a.price - b.price
+      tempProducts = tempProducts.sort((a, b) => {
+        return (a.price || 0) - (b.price || 0)
       })
     }
     if (sort === 'price-highest') {
-      tempProducts = filtered_products.sort((a, b) => {
-        // if (b.price < a.price) {
-        //   return -1
-        // }
-        // if (b.price > a.price) {
-        //   return 1
-        // }
-        // return 0
-        return b.price - a.price
+      tempProducts = tempProducts.sort((a, b) => {
+        return (b.price || 0) - (a.price || 0)
       })
     }
     if (sort === 'name-a') {
-      tempProducts = filtered_products.sort((a, b) => {
+      tempProducts = tempProducts.sort((a, b) => {
         return a.name.localeCompare(b.name)
       })
     }
     if (sort === 'name-z') {
-      tempProducts = filtered_products.sort((a, b) => {
+      tempProducts = tempProducts.sort((a, b) => {
         return b.name.localeCompare(a.name)
       })
     }
@@ -75,7 +66,7 @@ const filter_reducer = (state, action) => {
   }
   if (action.type === FILTER_PRODUCTS) {
     const { all_products } = state
-    const { text, category, company, color, price, shipping } = state.filters
+    const { text, category, price, shipping } = state.filters
     let tempProducts = [...all_products]
     if (text) {
       tempProducts = tempProducts.filter((product) =>
@@ -87,18 +78,13 @@ const filter_reducer = (state, action) => {
         (product) => product.category === category
       )
     }
-    if (company !== 'all') {
-      tempProducts = tempProducts.filter(
-        (product) => product.company === company
-      )
-    }
-    if (color !== 'all') {
-      tempProducts = tempProducts.filter((product) => {
-        return product.colors.find((c) => c === color)
-      })
-    }
+
     // filter by price
-    tempProducts = tempProducts.filter((product) => product.price <= price)
+    tempProducts = tempProducts.filter((product) => {
+      let offerPrices = product.offers ? product.offers.map(o => o.price) : []
+      let allPrices = [product.price, ...offerPrices]
+      return allPrices.some(p => p <= price)
+    })
     // filter by shipping
     if (shipping) {
       tempProducts = tempProducts.filter((product) => product.shipping === true)
@@ -111,7 +97,6 @@ const filter_reducer = (state, action) => {
       filters: {
         ...state.filters,
         text: '',
-        company: 'all',
         category: 'all',
         color: 'all',
         price: state.filters.max_price,

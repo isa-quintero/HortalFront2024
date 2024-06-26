@@ -2,15 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { useFilterContext } from '../context/filter_context'
 import { getUniqueValues, formatPrice } from '../utils/helpers'
-import { FaCheck } from 'react-icons/fa'
 
 const Filters = () => {
   const {
     filters: {
       text,
       category,
-      company,
-      color,
       min_price,
       price,
       max_price,
@@ -22,8 +19,6 @@ const Filters = () => {
   } = useFilterContext()
 
   const categories = getUniqueValues(all_products, 'category')
-  const companies = getUniqueValues(all_products, 'company')
-  const colors = getUniqueValues(all_products, 'colors')
   return (
     <Wrapper>
       <div className='content'>
@@ -62,63 +57,6 @@ const Filters = () => {
             </div>
           </div>
           {/* end of category */}
-          {/* company */}
-          <div className='form-control'>
-            <h5>empresa</h5>
-            <select
-              name='company'
-              value={company}
-              onChange={updateFilters}
-              className='company'
-            >
-              {companies.map((c, index) => {
-                return (
-                  <option key={index} value={c}>
-                    {c}
-                  </option>
-                )
-              })}
-            </select>
-          </div>
-          {/* end of company */}
-          {/* colors */}
-          <div className='form-control'>
-            <h5>colores</h5>
-            <div className='colors'>
-              {colors.map((c, index) => {
-                if (c === 'all') {
-                  return (
-                    <button
-                      key={index}
-                      name='color'
-                      onClick={updateFilters}
-                      data-color='all'
-                      className={`${
-                        color === 'all' ? 'all-btn active' : 'all-btn'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  )
-                }
-                return (
-                  <button
-                    key={index}
-                    name='color'
-                    style={{ background: c }}
-                    className={`${
-                      color === c ? 'color-btn active' : 'color-btn'
-                    }`}
-                    data-color={c}
-                    onClick={updateFilters}
-                  >
-                    {color === c ? <FaCheck /> : null}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-          {/* end of colors */}
           {/* price */}
           <div className='form-control'>
             <h5>precio</h5>
@@ -186,16 +124,6 @@ const Wrapper = styled.section`
   }
   .active {
     border-color: var(--clr-grey-5);
-  }
-  .company {
-    background: var(--clr-grey-10);
-    border-radius: var(--radius);
-    border-color: transparent;
-    padding: 0.25rem;
-  }
-  .colors {
-    display: flex;
-    align-items: center;
   }
   .color-btn {
     display: inline-block;
