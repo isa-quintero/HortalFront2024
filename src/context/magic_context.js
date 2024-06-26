@@ -29,7 +29,7 @@ export const MagicProvider = ({ children }) => {
     try {
       await magic.oauth.loginWithRedirect({
         provider,
-        redirectURI: `${window.location.origin}`,
+        redirectURI: `${window.location.origin}/register`,
       });
     } catch (error) {
       console.error('Error during loginWithRedirect:', error);

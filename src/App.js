@@ -13,7 +13,9 @@ import {
   AuthWrapper,
   Home,
   OAuthLogin,
+  
 } from './pages';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   return (
@@ -36,6 +38,7 @@ function App() {
             }
           />
           <Route path='login' element={<OAuthLogin />} />
+          <Route path='register' element={<RegisterPage />} />
           <Route path='*' element={<Error />} />
         </Routes>
         <Footer />
