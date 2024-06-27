@@ -16,6 +16,7 @@ import {
   
 } from './pages';
 import RegisterPage from './pages/RegisterPage';
+import CreateOfferPage from './pages/CreateOfferPage';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           />
           <Route path='login' element={<OAuthLogin />} />
           <Route path='register' element={<RegisterPage />} />
+          <Route path='offer' element={<CreateOfferPage />} />
           <Route path='*' element={<Error />} />
         </Routes>
         <Footer />
