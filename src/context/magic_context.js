@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import magic from '../magic'; // Import Magic instance
+import magic from '../magic'; // Importa la instancia de Magic
 
 const MagicContext = createContext();
 
 export const MagicProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     const checkUser = async () => {
@@ -21,11 +22,30 @@ export const MagicProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-    checkUser();
+
+    const handleRedirectResult = async () => {
+      try {
+        const result = await magic.oauth.getRedirectResult();
+        if (result.magic.idToken) {
+          const userMetadata = await magic.user.getMetadata();
+          setUser(userMetadata);
+        }
+      } catch (error) {
+        console.error('Error handling redirect result:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Llama a handleRedirectResult si hay parámetros en la URL
+    if (window.location.search.includes('provider')) {
+      handleRedirectResult();
+    } else {
+      checkUser();
+    }
   }, []);
 
   const login = async (provider) => {
-    console.log('Login called with provider:', provider); // Debugging
     try {
       await magic.oauth.loginWithRedirect({
         provider,
@@ -37,8 +57,12 @@ export const MagicProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await magic.user.logout();
-    setUser(null);
+    try {
+      await magic.user.logout();
+      setUser(null);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

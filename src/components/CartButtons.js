@@ -1,14 +1,25 @@
-import React from 'react'
-import { FaShoppingCart, FaUserMinus, FaUserPlus } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
-import { useProductsContext } from '../context/products_context'
-import { useCartContext } from '../context/cart_context'
-import { useUserContext } from '../context/user_context'
+import React from 'react';
+import { FaShoppingCart, FaUserMinus, FaUserPlus } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { useProductsContext } from '../context/products_context';
+import { useCartContext } from '../context/cart_context';
+import { useMagicContext } from '../context/magic_context'; // Importa el contexto de Magic
+
 const CartButton = () => {
-  const { closeSidebar } = useProductsContext()
-  const { total_items, clearCart } = useCartContext()
-  const { myUser, logout } = useUserContext()
+  const { closeSidebar } = useProductsContext();
+  const { total_items, clearCart } = useCartContext();
+  const { user, logout, isLoading } = useMagicContext(); // Usa el contexto de Magic
+
+  const handleLogout = async () => {
+    clearCart(); // Limpiar carrito al hacer logout
+    await logout(); // Llamar a la función logout del contexto de Magic
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Puedes mostrar un indicador de carga mientras se verifica el estado de autenticación
+  }
+
   return (
     <Wrapper className='cart-btn-wrapper'>
       <Link to='/cart' className='cart-btn' onClick={closeSidebar}>
@@ -18,16 +29,8 @@ const CartButton = () => {
           <span className='cart-value'>{total_items}</span>
         </span>
       </Link>
-      {myUser ? (
-        <button
-          type='button'
-          className='auth-btn'
-          onClick={() => {
-            clearCart()
-            localStorage.removeItem('user')
-            logout({ returnTo: window.location.origin })
-          }}
-        >
+      {user ? (
+        <button type='button' className='auth-btn' onClick={handleLogout}>
           Logout <FaUserMinus />
         </button>
       ) : (
@@ -36,8 +39,8 @@ const CartButton = () => {
         </Link>
       )}
     </Wrapper>
-  )
-}
+  );
+};
 
 const Wrapper = styled.div`
   display: grid;
@@ -49,9 +52,7 @@ const Wrapper = styled.div`
     color: var(--clr-grey-1);
     font-size: 1.5rem;
     letter-spacing: var(--spacing);
-    color: var(--clr-grey-1);
     display: flex;
-
     align-items: center;
   }
   .cart-container {
@@ -91,5 +92,6 @@ const Wrapper = styled.div`
       margin-left: 5px;
     }
   }
-`
-export default CartButton
+`;
+
+export default CartButton;

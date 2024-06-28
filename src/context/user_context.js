@@ -1,23 +1,32 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useMagicContext } from '../context/magic_context' // Importa el contexto de Magic
+import { useMagicContext } from '../context/magic_context'
 
-const UserContext = React.createContext()
+const UserContext = React.createContext();
+
 export const UserProvider = ({ children }) => {
-  const { loginWithRedirect, logout, user, isLoading, error } = useMagicContext() // Usa el contexto de Magic
+  const { loginWithRedirect, logout, user, isLoading, error } = useMagicContext(); // Usa el contexto de Magic
   const [myUser, setMyUser] = useState(null)
 
   useEffect(() => {
-    setMyUser(user)
+    setMyUser(user); // Actualiza el estado de myUser cuando cambia el usuario en Magic
   }, [user])
 
   return (
-    <UserContext.Provider 
-      value={{ loginWithRedirect, logout, myUser, isLoading, error }}
-      >
+    <UserContext.Provider
+      value={{
+        loginWithRedirect,
+        logout,
+        myUser,
+        isLoading,
+        error,
+        isAuthenticated: !!myUser // Agrega una propiedad para verificar si el usuario está autenticado
+      }}
+    >
       {children}
     </UserContext.Provider>
   )
 }
+
 export const useUserContext = () => {
-  return useContext(UserContext)
+  return useContext(UserContext); // Hook personalizado para acceder al contexto de usuario
 }
