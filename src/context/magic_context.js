@@ -1,3 +1,4 @@
+// magic_context.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import magic from '../magic'; // Importa la instancia de Magic
 
@@ -6,7 +7,6 @@ const MagicContext = createContext();
 export const MagicProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     const checkUser = async () => {
@@ -37,7 +37,6 @@ export const MagicProvider = ({ children }) => {
       }
     };
 
-    // Llama a handleRedirectResult si hay parámetros en la URL
     if (window.location.search.includes('provider')) {
       handleRedirectResult();
     } else {
@@ -60,6 +59,7 @@ export const MagicProvider = ({ children }) => {
     try {
       await magic.user.logout();
       setUser(null);
+      window.location.href = '/'; // Redirige a la ruta raíz (localhost:3000)
     } catch (error) {
       console.error('Error during logout:', error);
     }
