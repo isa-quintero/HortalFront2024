@@ -1,6 +1,6 @@
 // magic_context.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import magic from '../magic'; // Importa la instancia de Magic
+import magic from '../magic'; // Import Magic instance
 
 const MagicContext = createContext();
 
@@ -22,29 +22,11 @@ export const MagicProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-
-    const handleRedirectResult = async () => {
-      try {
-        const result = await magic.oauth.getRedirectResult();
-        if (result.magic.idToken) {
-          const userMetadata = await magic.user.getMetadata();
-          setUser(userMetadata);
-        }
-      } catch (error) {
-        console.error('Error handling redirect result:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (window.location.search.includes('provider')) {
-      handleRedirectResult();
-    } else {
-      checkUser();
-    }
+    checkUser();
   }, []);
 
   const login = async (provider) => {
+    console.log('Login called with provider:', provider); // Debugging
     try {
       await magic.oauth.loginWithRedirect({
         provider,
@@ -55,18 +37,24 @@ export const MagicProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const getRedirectResult = async () => {
     try {
-      await magic.user.logout();
-      setUser(null);
-      window.location.href = '/'; // Redirige a la ruta raíz (localhost:3000)
+      const result = await magic.oauth.getRedirectResult();
+      const userMetadata = await magic.user.getMetadata();
+      setUser(userMetadata);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error during getRedirectResult:', error);
     }
   };
 
+  const logout = async () => {
+    await magic.user.logout();
+    setUser(null);
+    window.location.href = '/'; // Redirect to home on logout
+  };
+
   return (
-    <MagicContext.Provider value={{ user, login, logout, isLoading }}>
+    <MagicContext.Provider value={{ user, login, getRedirectResult, logout, isLoading }}>
       {children}
     </MagicContext.Provider>
   );

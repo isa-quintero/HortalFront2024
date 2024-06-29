@@ -1,25 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useMagicContext } from '../context/magic_context';
 import styled from 'styled-components';
-import Logo from '../assets/hortalsoft.png'; // Asegúrate de actualizar la ruta del logo
-import Image from '../assets/hero-bcg.jpeg'; // Asegúrate de actualizar la ruta de la imagen
+import Logo from '../assets/hortalsoft.png'; 
+import Image from '../assets/hero-bcg.jpeg';
 
 const Register = () => {
+  const { user, getRedirectResult } = useMagicContext();
   const [role, setRole] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
 
+  useEffect(() => {
+    getRedirectResult(); // Obtener el resultado del redireccionamiento
+  }, [getRedirectResult]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar el formulario
+    const userData = {
+      ...user,
+      role,
+      city,
+      address,
+      phone,
+    };
+
+    // Imprimir los datos del usuario y del formulario juntos en la consola
+    console.log('User metadata:', user);
+    console.log('Form data:', { role, city, address, phone });
+    console.log('Combined user data:', userData);
+
+    // Aquí puedes hacer una llamada API para guardar los datos en la base de datos
   };
+
   return (
     <Wrapper className='section-center'>
       <article className='content'>
-      <p>
-          Ayudanos a completar la información de tu perfil, todos los campos son obligatorios:
-      </p>
-      <RegisterForm onSubmit={handleSubmit}>
+        <p>
+          Ayúdanos a completar la información de tu perfil, todos los campos son obligatorios:
+        </p>
+        <RegisterForm onSubmit={handleSubmit}>
           <Label>Rol:</Label>
           <Select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="">Seleccionar un rol</option>
@@ -54,7 +74,7 @@ const Register = () => {
         <img src={Logo} alt='person working' className='accent-img' />
       </article>
     </Wrapper>
-  )
+  );
 }
 
 const RegisterForm = styled.form`
@@ -156,5 +176,6 @@ const Wrapper = styled.section`
       border-radius: var(--radius);
     }
   }
-`
+`;
+
 export default Register;
