@@ -30,8 +30,8 @@ function App() {
           <Route path='products' element={<Products />} />
           <Route path='products/:id' element={<SingleProduct />} />
           <Route path='checkout' element={<PrivateRoute allowedRoles={['CUSTOMER', 'FARMER', 'ASSOCIATION']}><Checkout /></PrivateRoute>} />
-          <Route path='offer' element={<PrivateRoute allowedRoles={['CUSTOMER', 'FARMER']}><CreateOffer /></PrivateRoute>} />
-          <Route path='price-range' element={<PrivateRoute allowedRoles={['CUSTOMER', 'FARMER']}><Checkout /></PrivateRoute>} />
+          <Route path='offer' element={<PrivateRoute allowedRoles={['FARMER']}><CreateOffer /></PrivateRoute>} />
+          <Route path='price-range' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><Checkout /></PrivateRoute>} />
           <Route path='register' element={<PrivateRoute><RegisterPage /></PrivateRoute>} />
           <Route path='login' element={<OAuthLogin />} />
           <Route path='offer' element={<CreateOfferPage />} />

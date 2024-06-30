@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
         try {
           //const response = await axios.get(`${url_back}/profiles/user/${user.email}`); // Ajusta la URL según tu API
           //const userData = response.data;
-          setMyUser({ ...user, role: "FARMER" });
+          setMyUser({ ...user, role: 'FARMER' });
         } catch (error) {
           console.error('Error fetching user role:', error);
         }

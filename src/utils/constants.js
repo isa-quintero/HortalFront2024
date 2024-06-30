@@ -29,7 +29,8 @@ export const farmerLinks = [
 ];
 
 export const associationLinks = [
-  { id: 1, text: 'price-range', url: '/price-range' },
+  { id: 1, text: 'crear rango de precios', url: '/price-range' },
+  { id: 2, text: 'mis rangos de precios', url: '/price-ranges' },
 ];
 
 export const services = [
