@@ -3,39 +3,52 @@ import logo from '../assets/hortalsoft.png'
 import { Link } from 'react-router-dom'
 import { useProductsContext } from '../context/products_context'
 import { FaTimes } from 'react-icons/fa'
-import { links } from '../utils/constants'
+import {links,associationLinks,customerLinks,farmerLinks} from '../utils/constants'
 import styled from 'styled-components'
 import CartButtons from './CartButtons'
 import { useUserContext } from '../context/user_context'
 
 const Sidebar = () => {
-  const { isSidebarOpen, closeSidebar } = useProductsContext()
-  const { myUser } = useUserContext()
+  const { isSidebarOpen, closeSidebar } = useProductsContext();
+  const { myUser } = useUserContext();
+
+  let sidebarLinks = [];
+
+  switch (myUser?.role) {
+    case 'CUSTOMER':
+      sidebarLinks = customerLinks;
+      break;
+    case 'FARMER':
+      sidebarLinks = farmerLinks;
+      break;
+    case 'ASSOCIATION':
+      sidebarLinks = associationLinks;
+      break;
+    default:
+      sidebarLinks = links;
+  }
+
   return (
     <SidebarContainer>
-      <aside
-        className={`${isSidebarOpen ? 'sidebar show-sidebar' : 'sidebar'}`}
-      >
+      <aside className={`${isSidebarOpen ? 'sidebar show-sidebar' : 'sidebar'}`}>
         <div className='sidebar-header'>
-          <img src={logo} className='logo' alt='coding addict' />
+          <img src={logo} className='logo' alt='Hortalsoft' />
           <button className='close-btn' onClick={closeSidebar}>
             <FaTimes />
           </button>
         </div>
         <ul className='links'>
-          {links.map(({ id, text, url }) => {
-            return (
-              <li key={id}>
-                <Link to={url} onClick={closeSidebar}>
-                  {text}
-                </Link>
-              </li>
-            )
-          })}
+          {sidebarLinks.map(({ id, text, url }) => (
+            <li key={id}>
+              <Link to={url} onClick={closeSidebar}>
+                {text}
+              </Link>
+            </li>
+          ))}
           {myUser && (
             <li>
               <Link to='/checkout' onClick={closeSidebar}>
-                checkout
+                Checkout
               </Link>
             </li>
           )}

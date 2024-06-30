@@ -3,13 +3,27 @@ import styled from 'styled-components'
 import logo from '../assets/hortalsoft.png'
 import { FaBars } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-import { links } from '../utils/constants'
 import CartButtons from './CartButtons'
 import { useProductsContext } from '../context/products_context'
 import { useUserContext } from '../context/user_context'
+import {links,associationLinks,customerLinks,farmerLinks} from '../utils/constants'
+
 const Nav = () => {
-  const { openSidebar } = useProductsContext()
-  const { myUser } = useUserContext()
+  const { openSidebar } = useProductsContext();
+  const { myUser } = useUserContext();
+  
+  
+
+  let linksToShow;
+  if (myUser?.role === 'CUSTOMER') {
+    linksToShow = customerLinks;
+  } else if (myUser?.role === 'FARMER') {
+    linksToShow = farmerLinks;
+  } else if (myUser?.role === 'ASSOCIATION') {
+    linksToShow = associationLinks;
+  } else {
+    linksToShow = links;
+  }
   return (
     <NavContainer>
       <div className='nav-center'>
@@ -22,13 +36,13 @@ const Nav = () => {
           </button>
         </div>
         <ul className='nav-links'>
-          {links.map((link) => {
-            const { id, text, url } = link
+          {linksToShow.map((link) => {
+            const { id, text, url } = link;
             return (
               <li key={id}>
                 <Link to={url}>{text}</Link>
               </li>
-            )
+            );
           })}
           {myUser && (
             <li>
@@ -39,8 +53,8 @@ const Nav = () => {
         <CartButtons />
       </div>
     </NavContainer>
-  )
-}
+  );
+};
 
 const NavContainer = styled.nav`
   height: 5rem;
@@ -107,6 +121,6 @@ const NavContainer = styled.nav`
       display: grid;
     }
   }
-`
+`;
 
-export default Nav
+export default Nav;

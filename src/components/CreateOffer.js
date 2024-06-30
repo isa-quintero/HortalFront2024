@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png'; 
+import { url_back } from '../utils/constants';
 
 const CreateOffer = () => {
   const [productId, setProductId] = useState('');
@@ -13,7 +14,7 @@ const CreateOffer = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/inventory/products')
+    axios.get(`${url_back}/inventory/products`)
       .then(response => {
         setProducts(response.data);
       })
@@ -37,7 +38,7 @@ const CreateOffer = () => {
       idBlockchain: ''
     };
 
-    axios.post('http://localhost:8080/inventory/offer', offerData)
+    axios.post(`${url_back}/inventory/offers`, offerData)
       .then(response => {
         console.log('Oferta creada exitosamente:', response.data);
         // Aquí podrías mostrar un mensaje de éxito o redirigir a otra página

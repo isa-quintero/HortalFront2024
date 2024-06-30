@@ -7,7 +7,6 @@ import Error from './ErrorPage'
 import Checkout from './CheckoutPage'
 import PrivateRoute from './PrivateRoute'
 import AuthWrapper from './AuthWrapper'
-import Callback from './Callback'
 import OAuthLogin from './OAuthLogin'
 export {
   Home,

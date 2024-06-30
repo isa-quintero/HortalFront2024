@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useReducer } from 'react'
 import axios from 'axios'
 import reducer from '../reducers/filter_reducer'
+import { url_back } from '../utils/constants';
 import {
   LOAD_PRODUCTS,
   SET_GRIDVIEW,
@@ -39,8 +40,8 @@ export const FilterProvider = ({ children }) => {
     const fetchProductsAndOffers = async () => {
       try {
         const [productsRes, offersRes] = await Promise.all([
-          axios.get('http://localhost:8080/inventory/products'),
-          axios.get('http://localhost:8080/inventory/offers')
+          axios.get(`${url_back}/inventory/products`),
+          axios.get(`${url_back}/inventory/offers`)
         ]);
 
         const products = productsRes.data;

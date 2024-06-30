@@ -1,5 +1,6 @@
 import React from 'react'
 import { GiCompass, GiDiamondHard, GiStabbedNote } from 'react-icons/gi'
+
 export const links = [
   {
     id: 1,
@@ -17,6 +18,19 @@ export const links = [
     url: '/products',
   },
 ]
+export const customerLinks = [
+  { id: 1, text: 'dashboard', url: '/dashboard' },
+  { id: 2, text: 'products', url: '/products' },
+];
+
+export const farmerLinks = [
+  { id: 1, text: 'crear oferta', url: '/offer' },
+  { id: 2, text: 'mis ofertas', url: '/offers' },
+];
+
+export const associationLinks = [
+  { id: 1, text: 'price-range', url: '/price-range' },
+];
 
 export const services = [
   {
@@ -43,5 +57,7 @@ export const services = [
 ]
 
 export const products_url = 'http://localhost:8080/inventory/products'
+
+export const url_back = "http://localhost:8080/"
 
 export const single_product_url = `https://course-api.com/react-store-single-product?id=`
