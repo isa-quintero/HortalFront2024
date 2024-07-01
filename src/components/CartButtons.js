@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProductsContext } from '../context/products_context';
 import { useCartContext } from '../context/cart_context';
-import { useMagicContext } from '../context/magic_context'; // Importa el contexto de Magic
+import { useMagicContext } from '../context/magic_context'; 
+import { useUserContext } from '../context/user_context'
 
 const CartButton = () => {
   const { closeSidebar } = useProductsContext();
   const { total_items, clearCart } = useCartContext();
-  const { user, logout, isLoading } = useMagicContext(); // Usa el contexto de Magic
+  const { user, logout, isLoading } = useMagicContext();   
+  const { myUser } = useUserContext();
 
   const handleLogout = async () => {
     clearCart(); // Limpiar carrito al hacer logout
@@ -17,18 +19,23 @@ const CartButton = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Puedes mostrar un indicador de carga mientras se verifica el estado de autenticación
+    return <div>Loading...</div>; // Mostrar un indicador de carga mientras se verifica el estado de autenticación
   }
+
+  // Verificar si el usuario es un cliente (CUSTOMER) o no está autenticado
+  const isCustomerOrGuest = !user || (myUser && myUser.role === 'CUSTOMER');
 
   return (
     <Wrapper className='cart-btn-wrapper'>
-      <Link to='/cart' className='cart-btn' onClick={closeSidebar}>
-        Cart
-        <span className='cart-container'>
-          <FaShoppingCart />
-          <span className='cart-value'>{total_items}</span>
-        </span>
-      </Link>
+      {isCustomerOrGuest && (
+        <Link to='/cart' className='cart-btn' onClick={closeSidebar}>
+          Cart
+          <span className='cart-container'>
+            <FaShoppingCart />
+            <span className='cart-value'>{total_items}</span>
+          </span>
+        </Link>
+      )}
       {user ? (
         <button type='button' className='auth-btn' onClick={handleLogout}>
           Logout <FaUserMinus />

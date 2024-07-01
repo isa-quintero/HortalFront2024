@@ -44,7 +44,7 @@ const Nav = () => {
               </li>
             );
           })}
-          {myUser && (
+          {myUser && myUser.role === "CUSTOMER" &&(
             <li>
               <Link to='/checkout'>checkout</Link>
             </li>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useMagicContext } from '../context/magic_context'; 
 import styled from 'styled-components';
+import { Navigate } from 'react-router-dom';
+import { useUserContext } from '../context/user_context'; // Importa el contexto de usuario
 
 import fruitBasketImg from '../assets/basket.jpg';
 import googleLogo from '../assets/google.png';
@@ -9,7 +11,9 @@ import facebookLogo from '../assets/facebook.png';
 
 const OAuthLogin = () => {
   const { login } = useMagicContext();
+  const { myUser } = useUserContext(); // Obtén el usuario del contexto
 
+  // Maneja el inicio de sesión con proveedores
   const handleLogin = async (provider) => {
     console.log(`Login button clicked for provider: ${provider}`); 
     try {
@@ -19,6 +23,12 @@ const OAuthLogin = () => {
     }
   };
 
+  // Si el usuario ya está autenticado, redirige automáticamente a la página principal
+  if (myUser) {
+    return <Navigate to="/" />;
+  }
+
+  // Si no está autenticado, muestra el formulario de inicio de sesión
   return (
     <MainWrapper>
       <GrayBackground />
@@ -64,11 +74,9 @@ const GrayBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: hsl(111, 47%, 79%) ;/* Gris claro */
+  background-color: hsl(111, 47%, 79%); /* Gris claro */
   z-index: -1;
 `;
-
-
 
 const ContentBox = styled.div`
   background-color: #fff;

@@ -4,7 +4,7 @@ import { useMagicContext } from '../context/magic_context';
 import { useUserContext } from '../context/user_context'
 
 const PrivateRoute = ({ children, allowedRoles }) => {
-  const { user, isLoading } = useMagicContext();
+  const { isLoading } = useMagicContext();
   const { myUser } = useUserContext();
 
 
@@ -17,9 +17,8 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
   // Verifica si el usuario está autenticado y tiene un rol permitido, o si es la ruta de registro
   const isAllowed = isRegisterRoute || (myUser && allowedRoles.includes(myUser.role));
-  console.log(user)
 
-  return isAllowed ? children : <Navigate to="/login" />;
+  return isAllowed ? children : <Navigate to="/" />;
 };
 
 export default PrivateRoute;

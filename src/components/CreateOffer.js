@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import Logo from '../assets/Logohortalsoft.png'; 
+import Logo from '../assets/Logohortalsoft.png';
 import { url_back } from '../utils/constants';
+import { mintNFT } from '../utils/mintNFT';  // Importa tu función de minting
 
 const CreateOffer = () => {
   const [productId, setProductId] = useState('');
@@ -12,6 +13,7 @@ const CreateOffer = () => {
   const [initialDate, setInitialDate] = useState('');
   const [finalDate, setFinalDate] = useState('');
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios.get(`${url_back}/inventory/products`)
@@ -23,30 +25,34 @@ const CreateOffer = () => {
       });
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const offerData = {
-      productId: parseInt(productId), // Convertir a entero si es necesario
-      farmerId: 1, // Aquí puedes establecer el agricultor según la lógica de tu aplicación
-      description,
-      amount: parseInt(amount), // Convertir a entero si es necesario
-      price: parseFloat(price), // Convertir a flotante si es necesario
-      initialDate,
-      finalDate,
-      validity: true, // Puedes establecer este valor según la lógica de tu aplicación
-      idBlockchain: ''
-    };
+    try {
+      // Realiza el minting del NFT
+      const requestId = await mintNFT('tu_contract_id', parseInt(amount), 'direccion_destino');
+      
+      // Si el minting es exitoso, crea la oferta
+      const offerData = {
+        productId: parseInt(productId),
+        farmerId: 1,  // Aquí puedes establecer el agricultor según la lógica de tu aplicación
+        description,
+        amount: parseInt(amount),
+        price: parseFloat(price),
+        initialDate,
+        finalDate,
+        validity: true,
+        idBlockchain: requestId,  // Incluye el request_id del minting
+      };
 
-    axios.post(`${url_back}/inventory/offers`, offerData)
-      .then(response => {
-        console.log('Oferta creada exitosamente:', response.data);
-        // Aquí podrías mostrar un mensaje de éxito o redirigir a otra página
-      })
-      .catch(error => {
-        console.error('Error al crear la oferta:', error);
-        // Aquí podrías manejar el error mostrando un mensaje al usuario
-      });
+      const response = await axios.post(`${url_back}/inventory/offers`, offerData);
+      console.log('Oferta creada exitosamente:', response.data);
+      // Aquí podrías mostrar un mensaje de éxito o redirigir a otra página
+
+    } catch (error) {
+      console.error('Error al crear la oferta:', error);
+      setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');  // Maneja el error mostrando un mensaje al usuario
+    }
   };
 
   return (
@@ -102,6 +108,7 @@ const CreateOffer = () => {
             />
             <Button type="submit">Guardar</Button>
           </RegisterForm>
+          {error && <ErrorText>{error}</ErrorText>} {/* Muestra el mensaje de error si existe */}
         </article>
       </Wrapper>
     </main>
@@ -144,6 +151,11 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  margin-top: 20px;
 `;
 
 const Wrapper = styled.section`

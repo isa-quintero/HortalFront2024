@@ -45,7 +45,7 @@ const Sidebar = () => {
               </Link>
             </li>
           ))}
-          {myUser && (
+          {myUser && myUser.role === "CUSTOMER" && (
             <li>
               <Link to='/checkout' onClick={closeSidebar}>
                 Checkout
