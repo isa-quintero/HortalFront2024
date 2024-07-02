@@ -16,6 +16,8 @@ import {
 import RegisterPage from './pages/RegisterPage';
 import CreateOfferPage from './pages/CreateOfferPage';
 import CreateOffer from './components/CreateOffer';
+import CreatePriceRange from './components/CreatePriceRange';
+import CreatePriceRangePage from './pages/CreatePriceRangePage';
 
 function App() {
   return (
@@ -30,8 +32,8 @@ function App() {
           <Route path='products' element={<Products />} />
           <Route path='products/:id' element={<SingleProduct />} />
           <Route path='checkout' element={<PrivateRoute allowedRoles={['CUSTOMER']}><Checkout /></PrivateRoute>} />
-          <Route path='offer' element={<PrivateRoute allowedRoles={['FARMER']}><CreateOffer /></PrivateRoute>} />
-          <Route path='price-range' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><Checkout /></PrivateRoute>} />
+          <Route path='offer' element={<PrivateRoute allowedRoles={['FARMER']}><CreateOfferPage /></PrivateRoute>} />
+          <Route path='price-range' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><CreatePriceRangePage /></PrivateRoute>} />
           <Route path='register' element={<PrivateRoute><RegisterPage /></PrivateRoute>} />
           <Route path='login' element={<OAuthLogin />} />
           <Route path='offer' element={<CreateOfferPage />} />

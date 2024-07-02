@@ -19,18 +19,21 @@ export const links = [
   },
 ]
 export const customerLinks = [
-  { id: 1, text: 'dashboard', url: '/dashboard' },
-  { id: 2, text: 'products', url: '/products' },
+  { id: 1, text: 'inicio', url: '/'},
+  { id: 2, text: '¿Quiénes somos?', url: '/about'},
+  { id: 3, text: 'productos', url: '/products' }
 ];
 
 export const farmerLinks = [
-  { id: 1, text: 'crear oferta', url: '/offer' },
-  { id: 2, text: 'mis ofertas', url: '/offers' },
+  { id: 1, text: 'inicio', url: '/'},
+  { id: 2, text: 'crear oferta', url: '/offer' },
+  { id: 3, text: 'mis ofertas', url: '/offers' },
 ];
 
 export const associationLinks = [
-  { id: 1, text: 'crear rango de precios', url: '/price-range' },
-  { id: 2, text: 'mis rangos de precios', url: '/price-ranges' },
+  { id: 1, text: 'inicio', url: '/'},
+  { id: 2, text: 'crear rango de precios', url: '/price-range' },
+  { id: 3, text: 'mis rangos de precios', url: '/price-ranges' },
 ];
 
 export const services = [
