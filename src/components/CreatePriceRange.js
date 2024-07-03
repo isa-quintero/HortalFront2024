@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import CultivoImage from '../assets/cultivo.jpg';
+import { url_back } from '../utils/constants';
+import axios from 'axios';
+
+
 
 const CreatePriceRange = () => {
   const [productId, setProductId] = useState('');
@@ -8,14 +12,20 @@ const CreatePriceRange = () => {
   const [finalPrice, setFinalPrice] = useState('');
   const [initialDate, setInitialDate] = useState('');
   const [finalDate, setFinalDate] = useState('');
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Producto 1' },
-    { id: 2, name: 'Producto 2' },
-    { id: 3, name: 'Producto 3' },
-  ]);
+  const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState({});
   const [formMessage, setFormMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    axios.get(`${url_back}/inventory/products`)
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,10 +51,6 @@ const CreatePriceRange = () => {
     if (Object.keys(newErrors).length > 0) {
       if (newErrors.form) {
         setFormMessage(newErrors.form);
-      } else if (newErrors.price || newErrors.finalPrice) {
-        setFormMessage('Por favor, corrija los errores en los precios.');
-      } else if (newErrors.initialDate || newErrors.finalDate) {
-        setFormMessage('Por favor, corrija los errores en las fechas.');
       }
       setErrors(newErrors);
       return;
@@ -102,23 +108,6 @@ const CreatePriceRange = () => {
                 type="text"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                onBlur={() => {
-                  if (parseFloat(price) > parseFloat(finalPrice)) {
-                    setErrors((prevErrors) => ({
-                      ...prevErrors,
-                      price: 'El precio inicial no puede ser mayor que el precio final',
-                      finalPrice: 'El precio final no puede ser menor que el precio inicial',
-                    }));
-                    setFormMessage('Por favor, corrija los errores en los precios.');
-                  } else {
-                    setErrors((prevErrors) => ({
-                      ...prevErrors,
-                      price: '',
-                      finalPrice: '',
-                    }));
-                    setFormMessage('');
-                  }
-                }}
                 onFocus={() => setErrors({ ...errors, price: '' })}
               />
             </FormGroup>
@@ -135,7 +124,7 @@ const CreatePriceRange = () => {
                       price: 'El precio inicial no puede ser mayor que el precio final',
                       finalPrice: 'El precio final no puede ser menor que el precio inicial',
                     }));
-                    setFormMessage('Por favor, corrija los errores en los precios.');
+                    setFormMessage('Ingrese un precio valido, el precio final no puede ser menor al inicial.');
                   } else {
                     setErrors((prevErrors) => ({
                       ...prevErrors,
@@ -155,23 +144,6 @@ const CreatePriceRange = () => {
               type="date"
               value={initialDate}
               onChange={(e) => setInitialDate(e.target.value)}
-              onBlur={() => {
-                if (new Date(initialDate) > new Date(finalDate)) {
-                  setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    initialDate: 'La fecha inicial no puede ser mayor que la fecha final',
-                    finalDate: 'La fecha final no puede ser menor que la fecha inicial',
-                  }));
-                  setFormMessage('Por favor, corrija los errores en las fechas.');
-                } else {
-                  setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    initialDate: '',
-                    finalDate: '',
-                  }));
-                  setFormMessage('');
-                }
-              }}
               onFocus={() => setErrors({ ...errors, initialDate: '' })}
             />
           </FormGroup>
@@ -188,7 +160,7 @@ const CreatePriceRange = () => {
                     initialDate: 'La fecha inicial no puede ser mayor que la fecha final',
                     finalDate: 'La fecha final no puede ser menor que la fecha inicial',
                   }));
-                  setFormMessage('Por favor, corrija los errores en las fechas.');
+                  setFormMessage('Ingrese una fecha válida, la fecha final no debe ser menor a la fecha inicial.');
                 } else {
                   setErrors((prevErrors) => ({
                     ...prevErrors,
