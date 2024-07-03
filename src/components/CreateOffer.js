@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png';
 import { url_back } from '../utils/constants';
-import { mintNFT } from '../utils/mintNFT';  // Importa tu función de minting
+import { mintNFT } from '../utils/mintNFT';
 
 const CreateOffer = () => {
   const [productId, setProductId] = useState('');
@@ -14,6 +14,8 @@ const CreateOffer = () => {
   const [finalDate, setFinalDate] = useState('');
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
+  const [formIncomplete, setFormIncomplete] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     axios.get(`${url_back}/inventory/products`)
@@ -28,10 +30,20 @@ const CreateOffer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!productId || !description || !amount || !price || !initialDate || !finalDate) {
+      setFormIncomplete(true);
+      return;
+    }
+
+    if (new Date(initialDate) > new Date(finalDate)) {
+      setError('La fecha inicial no puede ser mayor que la fecha límite.');
+      return;
+    }
+
     try {
       // Realiza el minting del NFT
       const requestId = await mintNFT('tu_contract_id', parseInt(amount), 'direccion_destino');
-      
+            
       // Si el minting es exitoso, crea la oferta
       const offerData = {
         productId: parseInt(productId),
@@ -46,77 +58,133 @@ const CreateOffer = () => {
       };
 
       const response = await axios.post(`${url_back}/inventory/offers`, offerData);
-      console.log('Oferta creada exitosamente:', response.data);
-      // Aquí podrías mostrar un mensaje de éxito o redirigir a otra página
+      console.log('Oferta creada exitosamente:', response.data);      console.log('Oferta creada exitosamente');
+      setShowModal(true);
+
+      // Aquí podrías realizar otras acciones necesarias después de crear la oferta
 
     } catch (error) {
       console.error('Error al crear la oferta:', error);
-      setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');  // Maneja el error mostrando un mensaje al usuario
+      setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');
     }
   };
 
   return (
-    <main>
-      <Wrapper className='page section section-center'>
-        <img src={Logo} alt='nice desk' />
-        <article>
-          <p>
-            Para poder crear la oferta debe llenar todos los campos marcados como obligatorios 
-          </p>
-          <RegisterForm onSubmit={handleSubmit}>
-            <Label>Producto:</Label>
+    <Wrapper className='page section section-center'>
+      <LogoImage src={Logo} alt='nice desk' />
+      <FormWrapper>
+        <WarningMessage>Para poder crear la oferta debe llenar todos los campos marcados como obligatorios.</WarningMessage>
+        {error && <ErrorText>{error}</ErrorText>}
+        {formIncomplete && <ErrorText>Por favor complete todos los campos obligatorios.</ErrorText>}
+        <RegisterForm onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label>
+              Producto
+              <Required>*</Required>
+            </Label>
             <Select value={productId} onChange={(e) => setProductId(e.target.value)}>
               <option value="">Seleccione un producto</option>
               {products.map((prod) => (
                 <option key={prod.id} value={prod.id}>{prod.name}</option>
               ))}
             </Select>
-            <Label>Descripción:</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label>
+              Descripción
+              <Required>*</Required>
+            </Label>
             <Input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder=""
             />
-            <Label>Cantidad:</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label>
+              Cantidad
+              <Required>*</Required>
+            </Label>
             <Input
               type="text"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder=""
             />
-            <Label>Precio:</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label>
+              Precio
+              <Required>*</Required>
+            </Label>
             <Input
-              type="number"
+              type="text"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder='Ingrese el precio'
             />
-            <Label>Fecha Inicial de duración de la oferta:</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label>
+              Fecha Inicial de duración de la oferta
+              <Required>*</Required>
+            </Label>
             <Input
-              type="datetime-local"
+              type="date" // Cambiado a 'date' para mostrar solo mes y día
               value={initialDate}
               onChange={(e) => setInitialDate(e.target.value)}
               placeholder='Seleccione la fecha en la que iniciará su oferta'
             />
-            <Label>Fecha Limite de vigencia de la oferta:</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label>
+              Fecha Límite de vigencia de la oferta
+              <Required>*</Required>
+            </Label>
             <Input
-              type="datetime-local"
+              type="date" // Cambiado a 'date' para mostrar solo mes y día
               value={finalDate}
               onChange={(e) => setFinalDate(e.target.value)}
               placeholder='Seleccione la fecha hasta que su oferta estará vigente'
             />
-            <Button type="submit">Guardar</Button>
-          </RegisterForm>
-          {error && <ErrorText>{error}</ErrorText>} {/* Muestra el mensaje de error si existe */}
-        </article>
-      </Wrapper>
-    </main>
+          </FormGroup>
+          <Button type="submit">Guardar</Button>
+        </RegisterForm>
+      </FormWrapper>
+      {showModal && (
+        <Modal>
+          <ModalContent>
+            <h2>Oferta enviada</h2>
+            <p>Tu oferta ha sido creada exitosamente.</p>
+            <Button onClick={() => setShowModal(false)}>Cerrar</Button>
+          </ModalContent>
+        </Modal>
+      )}
+    </Wrapper>
   );
 };
 
+const Wrapper = styled.main`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const FormWrapper = styled.div`
+  width: 45%;
+`;
+
 const RegisterForm = styled.form`
-  width: 100%;
+  margin-top: 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
 `;
 
 const Label = styled.label`
@@ -155,36 +223,45 @@ const Button = styled.button`
 
 const ErrorText = styled.p`
   color: red;
-  margin-top: 20px;
+  margin-top: 8px;
+  margin-bottom: 0;
 `;
 
-const Wrapper = styled.section`
-  padding-top: 10px;
-  display: grid;
-  gap: 2rem;
-  img {
-    width: 100%;
-    display: block;
-    border-radius: var(--radius);
-    height: 500px;
-    object-fit: cover;
-  }
-  p {
-    line-height: 2;
-    max-width: 45em;
-    margin: 0 auto;
-    margin-top: 1rem;
-    color: var(--clr-grey-5);
-  }
-  .title {
-    text-align: left;
-  }
-  .underline {
-    margin-left: 0;
-  }
-  @media (min-width: 992px) {
-    grid-template-columns: 1fr 1fr;
-  }
+const WarningMessage = styled.p`
+  color: black;
+  font-weight: bold;
+  margin-bottom: 20px;
+`;
+
+const Required = styled.span`
+  color: red;
+  margin-left: 5px;
+`;
+
+const LogoImage = styled.img`
+  width: 50%;
+  display: block;
+  border-radius: var(--radius);
+  object-fit: cover;
+`;
+
+const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
 `;
 
 export default CreateOffer;
