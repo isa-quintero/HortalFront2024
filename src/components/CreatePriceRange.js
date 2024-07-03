@@ -15,26 +15,44 @@ const CreatePriceRange = () => {
   ]);
   const [errors, setErrors] = useState({});
   const [formMessage, setFormMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validación de los campos
     const newErrors = {};
-    if (!productId) newErrors.productId = 'El campo es obligatorio';
-    if (!price) newErrors.price = 'El campo es obligatorio';
-    if (!finalPrice) newErrors.finalPrice = 'El campo es obligatorio';
-    if (!initialDate) newErrors.initialDate = 'El campo es obligatorio';
-    if (!finalDate) newErrors.finalDate = 'El campo es obligatorio';
+    if (!productId || !price || !finalPrice || !initialDate || !finalDate) {
+      newErrors.form = 'Por favor, rellene todos los campos obligatorios.';
+    }
 
+    // Validación de lógica de negocio
+    if (parseFloat(price) > parseFloat(finalPrice)) {
+      newErrors.price = 'El precio inicial no puede ser mayor que el precio final';
+      newErrors.finalPrice = 'El precio final no puede ser menor que el precio inicial';
+    }
+
+    if (new Date(initialDate) > new Date(finalDate)) {
+      newErrors.initialDate = 'La fecha inicial no puede ser mayor que la fecha final';
+      newErrors.finalDate = 'La fecha final no puede ser menor que la fecha inicial';
+    }
+
+    // Determinar mensaje de error final
     if (Object.keys(newErrors).length > 0) {
+      if (newErrors.form) {
+        setFormMessage(newErrors.form);
+      } else if (newErrors.price || newErrors.finalPrice) {
+        setFormMessage('Por favor, corrija los errores en los precios.');
+      } else if (newErrors.initialDate || newErrors.finalDate) {
+        setFormMessage('Por favor, corrija los errores en las fechas.');
+      }
       setErrors(newErrors);
-      setFormMessage('Por favor, rellene todos los campos obligatorios.');
       return;
     }
 
     setErrors({});
     setFormMessage('');
+    setShowModal(true);
 
     const offerData = {
       productId: parseInt(productId), // Convertir a entero si es necesario
@@ -84,6 +102,23 @@ const CreatePriceRange = () => {
                 type="text"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                onBlur={() => {
+                  if (parseFloat(price) > parseFloat(finalPrice)) {
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      price: 'El precio inicial no puede ser mayor que el precio final',
+                      finalPrice: 'El precio final no puede ser menor que el precio inicial',
+                    }));
+                    setFormMessage('Por favor, corrija los errores en los precios.');
+                  } else {
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      price: '',
+                      finalPrice: '',
+                    }));
+                    setFormMessage('');
+                  }
+                }}
                 onFocus={() => setErrors({ ...errors, price: '' })}
               />
             </FormGroup>
@@ -93,6 +128,23 @@ const CreatePriceRange = () => {
                 type="text"
                 value={finalPrice}
                 onChange={(e) => setFinalPrice(e.target.value)}
+                onBlur={() => {
+                  if (parseFloat(price) > parseFloat(finalPrice)) {
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      price: 'El precio inicial no puede ser mayor que el precio final',
+                      finalPrice: 'El precio final no puede ser menor que el precio inicial',
+                    }));
+                    setFormMessage('Por favor, corrija los errores en los precios.');
+                  } else {
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      price: '',
+                      finalPrice: '',
+                    }));
+                    setFormMessage('');
+                  }
+                }}
                 onFocus={() => setErrors({ ...errors, finalPrice: '' })}
               />
             </FormGroup>
@@ -103,6 +155,23 @@ const CreatePriceRange = () => {
               type="date"
               value={initialDate}
               onChange={(e) => setInitialDate(e.target.value)}
+              onBlur={() => {
+                if (new Date(initialDate) > new Date(finalDate)) {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    initialDate: 'La fecha inicial no puede ser mayor que la fecha final',
+                    finalDate: 'La fecha final no puede ser menor que la fecha inicial',
+                  }));
+                  setFormMessage('Por favor, corrija los errores en las fechas.');
+                } else {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    initialDate: '',
+                    finalDate: '',
+                  }));
+                  setFormMessage('');
+                }
+              }}
               onFocus={() => setErrors({ ...errors, initialDate: '' })}
             />
           </FormGroup>
@@ -112,11 +181,36 @@ const CreatePriceRange = () => {
               type="date"
               value={finalDate}
               onChange={(e) => setFinalDate(e.target.value)}
+              onBlur={() => {
+                if (new Date(initialDate) > new Date(finalDate)) {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    initialDate: 'La fecha inicial no puede ser mayor que la fecha final',
+                    finalDate: 'La fecha final no puede ser menor que la fecha inicial',
+                  }));
+                  setFormMessage('Por favor, corrija los errores en las fechas.');
+                } else {
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    initialDate: '',
+                    finalDate: '',
+                  }));
+                  setFormMessage('');
+                }
+              }}
               onFocus={() => setErrors({ ...errors, finalDate: '' })}
             />
           </FormGroup>
           <Button type="submit">Guardar</Button>
         </RegisterForm>
+        {showModal && (
+          <Modal>
+            <ModalContent>
+              <p><strong>Se ha creado el rango de precios de forma exitosa</strong></p>
+              <CloseButton onClick={() => setShowModal(false) }>Cerrar</CloseButton>
+            </ModalContent>
+          </Modal>
+        )}
       </FormWrapper>
     </Wrapper>
   );
@@ -216,6 +310,40 @@ const Button = styled.button`
   cursor: pointer;
   font-size: 16px;
   margin-top: 20px;
+`;
+
+const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
+
+const CloseButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
 `;
 
 const FormMessage = styled.div`
