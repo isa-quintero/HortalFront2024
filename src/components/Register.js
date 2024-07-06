@@ -40,13 +40,14 @@ const Register = () => {
     e.preventDefault();
     const userData = {
       emailUser: user.email,
-      documentType,
-      idNumber,
+      username: user.email,
+      documentTypeId: parseInt(documentType),
+      idNumber: parseInt(idNumber),
       role,
       city,
       address,
-      phone,
-      association: role === 'Agricultor' ? association : null,
+      phone: parseInt(phone),
+      association: role === 'FARMER' ? parseInt(association) : null,
     };
 
     console.log('User metadata:', user);
@@ -54,9 +55,9 @@ const Register = () => {
     console.log('Combined user data:', userData);
     try {
       let response;
-      if (role === "Agricultor") {
+      if (role === "FARMER") {
         response = await axios.post(`${url_back}profiles/farmer`, userData);
-      } else if (role === "Asociación") {
+      } else if (role === "ASSOCIATION") {
         response = await axios.post(`${url_back}profiles/association`, userData);
       } else {
         response = await axios.post(`${url_back}profiles/customer`, userData);
@@ -67,6 +68,10 @@ const Register = () => {
       console.error('Error registrando usuario:', error);
     }
   };
+  const closeModalAndRedirect = () => {
+    setShowModal(false);
+    window.location.href='/'; // Redirige a la página de inicio
+  };
 
   return (
     <Wrapper className='section-center'>
@@ -75,11 +80,11 @@ const Register = () => {
           Ayúdanos a completar la información de tu perfil, todos los campos son obligatorios:
         </p>
         <RegisterForm onSubmit={handleSubmit}>
-          <Label>Tipo de documento:</Label>
+        <Label>Tipo de documento:</Label>
           <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un tipo de documento</option>
             {documentTypes.map((dt) => (
-              <option key={dt.id} value={dt.id}>{dt.name}</option>
+              <option key={dt.idDocumentType} value={dt.idDocumentType}>{dt.name}</option>
             ))}
           </Select>
           
@@ -93,11 +98,11 @@ const Register = () => {
           <Label>Rol:</Label>
           <Select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un rol</option>
-            <option value="cliente">Cliente</option>
-            <option value="Agricultor">Agricultor</option>
-            <option value="Asociacion">Asociación</option>
+            <option value="CUSTOMER">Cliente</option>
+            <option value="FARMER">Agricultor</option>
+            <option value="ASSOCIATION">Asociación</option>
           </Select>
-          {role === 'Agricultor' && (
+          {role === 'FARMER' && (
             <>
               <Label>Asociación a la que pertenece:</Label>
               <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
@@ -139,7 +144,7 @@ const Register = () => {
           <ModalContent>
             <h2>Registro Exitoso</h2>
             <p>Te has registrado de forma exitosa.</p>
-            <Button onClick={() => setShowModal(false)}>Cerrar</Button>
+            <Button onClick={closeModalAndRedirect}>Cerrar</Button>
           </ModalContent>
         </Modal>
       )}
