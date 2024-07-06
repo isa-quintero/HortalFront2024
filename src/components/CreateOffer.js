@@ -4,8 +4,10 @@ import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png';
 import { url_back } from '../utils/constants';
 import { mintNFT } from '../utils/mintNFT';
+import { useMagicContext } from '../context/magic_context';
 
 const CreateOffer = () => {
+  const { user } = useMagicContext();
   const [productId, setProductId] = useState('');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -18,7 +20,7 @@ const CreateOffer = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get(`${url_back}/inventory/products`)
+    axios.get(`${url_back}inventory/products`)
       .then(response => {
         setProducts(response.data);
       })
@@ -42,7 +44,7 @@ const CreateOffer = () => {
 
     try {
       // Realiza el minting del NFT
-      const requestId = await mintNFT('tu_contract_id', parseInt(amount), 'direccion_destino');
+      const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount),user.publicAddress );
             
       // Si el minting es exitoso, crea la oferta
       const offerData = {
@@ -57,7 +59,7 @@ const CreateOffer = () => {
         idBlockchain: requestId,  // Incluye el request_id del minting
       };
 
-      const response = await axios.post(`${url_back}/inventory/offers`, offerData);
+      const response = await axios.post(`${url_back}inventory/offer`, offerData);
       console.log('Oferta creada exitosamente:', response.data);      console.log('Oferta creada exitosamente');
       setShowModal(true);
 

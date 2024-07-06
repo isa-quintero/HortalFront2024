@@ -3,7 +3,7 @@ export const mintNFT = async (contract_id, quantity, destination_address) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Magic-Secret-Key": "sk_live_xxxxxxx",  // Reemplaza esto con tu clave secreta de Magic
+        "X-Magic-Secret-Key": process.env.SECRET_KEY,  // Reemplaza esto con tu clave secreta de Magic
       },
       body: JSON.stringify({
         contract_id: contract_id,

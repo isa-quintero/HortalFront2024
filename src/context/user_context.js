@@ -12,12 +12,12 @@ export const UserProvider = ({ children }) => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          const encodedEmail = encodeURIComponent(user.email);
-          const response = await axios.get(`${url_back}profiles/customer-email/${encodedEmail}`); // Ajusta la URL según tu API
-          const userData = response.data;
-          console.log("userData",userData);
-          console.log("rol",userData.role);
-          setMyUser({ ...user, role: userData.role });
+          //const encodedEmail = encodeURIComponent(user.email);
+          //const response = await axios.get(`${url_back}profiles/customer-email/${encodedEmail}`); // Ajusta la URL según tu API
+          //const userData = response.data;
+          //console.log("userData",userData);
+          //console.log("rol",userData.role);
+          setMyUser({ ...user, role: "FARMER" });
         } catch (error) {
           console.error('Error fetching user role:', error);
         }

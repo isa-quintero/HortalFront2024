@@ -1,34 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import CultivoImage from '../assets/hero-bcg-2.jpg'; // Asegúrate de que la ruta sea correcta
 
 const OffersTable = () => {
-  const [offers, setOffers] = useState([
-    {
-      product: 'Producto 1',
-      price: '90',
-      description: 'Oferta especial',
-      quantity: '100 unidades',
-      initialDate: '2024-07-01',
-      finalDate: '2024-07-10',
-    },
-    {
-      product: 'Producto 2',
-      price: '180',
-      description: 'Descuento de verano',
-      quantity: '50 unidades',
-      initialDate: '2024-07-05',
-      finalDate: '2024-07-15',
-    },
-    {
-      product: 'Producto 3',
-      price: '270',
-      description: 'Venta de liquidación',
-      quantity: '200 unidades',
-      initialDate: '2024-07-10',
-      finalDate: '2024-07-20',
-    },
-  ]);
+  const [associationId, setAssociationId] = useState(null);
+  const [offers, setOffers] = useState([]);
+
+  // Solicitud para obtener associationId
+  useEffect(() => {
+    const fetchAssociationId = async () => {
+      try {
+        const response = await axios.get(`/profiles/farmerid/${idNumber}`);
+        setAssociationId(response.data.associationId); // Ajusta esto según la estructura de tu respuesta
+      } catch (error) {
+        console.error('Error fetching associationId:', error);
+      }
+    };
+
+    fetchAssociationId();
+  }, [idNumber]);
+
+  // Solicitud para obtener las ofertas usando associationId
+  useEffect(() => {
+    const fetchOffers = async () => {
+      if (!associationId) return;
+
+      try {
+        const response = await axios.get(`/inventory/price-ranges-association/${associationId}`);
+        setOffers(response.data);
+      } catch (error) {
+        console.error('Error fetching offers:', error);
+      }
+    };
+
+    fetchOffers();
+  }, [associationId]);
 
   const validateOffers = (offers) => {
     return offers.map((offer) => {
