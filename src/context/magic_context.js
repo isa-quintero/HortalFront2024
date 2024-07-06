@@ -6,6 +6,7 @@ const MagicContext = createContext();
 
 export const MagicProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [email,setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -14,6 +15,7 @@ export const MagicProvider = ({ children }) => {
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) {
           const userMetadata = await magic.user.getMetadata();
+          setEmail(userMetadata.email);
           setUser(userMetadata);
         }
       } catch (error) {
@@ -42,6 +44,7 @@ export const MagicProvider = ({ children }) => {
       const result = await magic.oauth.getRedirectResult();
       const userMetadata = await magic.user.getMetadata();
       setUser(userMetadata);
+      setEmail(userMetadata.email)
     } catch (error) {
       console.error('Error during getRedirectResult:', error);
     }

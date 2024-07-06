@@ -1,27 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useMagicContext } from '../context/magic_context';
 import styled from 'styled-components';
+import axios from 'axios';
 import Logo from '../assets/hortalsoft.png'; 
 import Image from '../assets/hero-bcg.jpeg';
+import { url_back } from '../utils/constants';
+
 
 const Register = () => {
-  const { user, getRedirectResult } = useMagicContext();
+  const { user, getRedirectResult,email } = useMagicContext();
   const [documentType, setDocumentType] = useState('');
+  const [documentTypes, setDocumentTypes] = useState([]);
   const [idNumber, setIdNumber] = useState('');
   const [role, setRole] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [association, setAssociation] = useState('');
+  const [associations, setAssociations] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    axios.get(`${url_back}profiles/document-types`)
+      .then(response => {
+        setDocumentTypes(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+
+    axios.get(`${url_back}profiles/associations`)
+      .then(response => {
+        setAssociations(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
     getRedirectResult(); // Obtener el resultado del redireccionamiento
   }, [getRedirectResult]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const userData = {
-      ...user,
+      email,
       documentType,
       idNumber,
       role,
@@ -32,11 +53,24 @@ const Register = () => {
     };
 
     // Imprimir los datos del usuario y del formulario juntos en la consola
+    console.log('Email:',email)
     console.log('User metadata:', user);
     console.log('Form data:', {documentType, idNumber, role, city, address, phone, association});
     console.log('Combined user data:', userData);
-
-    // Aquí puedes hacer una llamada API para guardar los datos en la base de datos
+    if (role == "Agricultor"){
+      const response = await axios.post(`${url_back}/profiles/farmer`, userData);
+      console.log('Usuario registrado de forma correcta:', response.data);      
+      setShowModal(true);
+    } else if(role == "Asociación"){
+      const response = await axios.post(`${url_back}/profiles/association`, userData);
+      console.log('Usuario registrado de forma correcta:', response.data);      
+      setShowModal(true);
+    } else{
+      const response = await axios.post(`${url_back}/profiles/customer`, userData);
+      console.log('Usuario registrado de forma correcta:', response.data);      
+      setShowModal(true);
+    }
+    
   };
 
   return (
@@ -49,10 +83,11 @@ const Register = () => {
           <Label>Tipo de documento:</Label>
           <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un tipo de documento</option>
-            <option value="CC">Cédula de ciudadanía</option>
-            <option value="pasaporte">Pasaporte</option>
-            <option value="NIT">NIT</option>
+            {documentTypes.map((dt) => (
+                <option key={dt.id} value={dt.id}>{dt.name}</option>
+              ))}
           </Select>
+          
           <Label>Número de identificación:</Label>
           <Input
             type="number"
@@ -70,12 +105,12 @@ const Register = () => {
           {role === 'Agricultor' && (
             <>
               <Label>Asociación a la que pertenece:</Label>
-              <Input
-                type="text"
-                value={association}
-                onChange={(e) => setAssociation(e.target.value)}
-                placeholder="Digita el nombre de la asociación"
-              />
+              <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
+                <option value="" disabled hidden>Seleccionar la asociación</option>
+                {associations.map((dt) => (
+                    <option key={dt.id} value={dt.id}>{dt.name}</option>
+                  ))}
+              </Select>
             </>
           )}
           <Label>Dirección:</Label>
@@ -104,6 +139,15 @@ const Register = () => {
         <img src={Image} alt='nice table' className='main-img' />
         <img src={Logo} alt='person working' className='accent-img' />
       </article>
+      {showModal && (
+        <Modal>
+          <ModalContent>
+            <h2>Regsitro Exitoso</h2>
+            <p>Te has registrado de forma exitosa.</p>
+            <Button onClick={() => setShowModal(false)}>Cerrar</Button>
+          </ModalContent>
+        </Modal>
+      )}
     </Wrapper>
   );
 }
@@ -207,6 +251,24 @@ const Wrapper = styled.section`
       border-radius: var(--radius);
     }
   }
+`; 
+const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
 `;
 
 export default Register;
