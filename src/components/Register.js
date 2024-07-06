@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useMagicContext } from '../context/magic_context';
 import styled from 'styled-components';
 import axios from 'axios';
-import Logo from '../assets/hortalsoft.png'; 
+import Logo from '../assets/hortalsoft.png';
 import Image from '../assets/hero-bcg.jpeg';
 import { url_back } from '../utils/constants';
 
 
 const Register = () => {
-  const { user, getRedirectResult,email } = useMagicContext();
+  const { user, getRedirectResult } = useMagicContext();
   const [documentType, setDocumentType] = useState('');
   const [documentTypes, setDocumentTypes] = useState([]);
   const [idNumber, setIdNumber] = useState('');
@@ -21,28 +21,25 @@ const Register = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get(`${url_back}profiles/document-types`)
-      .then(response => {
-        setDocumentTypes(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
+    const fetchData = async () => {
+      try {
+        const documentTypesResponse = await axios.get(`${url_back}profiles/document-types`);
+        setDocumentTypes(documentTypesResponse.data);
 
-    axios.get(`${url_back}profiles/associations`)
-      .then(response => {
-        setAssociations(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
+        const associationsResponse = await axios.get(`${url_back}profiles/associations`);
+        setAssociations(associationsResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
     getRedirectResult(); // Obtener el resultado del redireccionamiento
   }, [getRedirectResult]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userData = {
-      email,
+      emailUser: user.email,
       documentType,
       idNumber,
       role,
@@ -52,25 +49,23 @@ const Register = () => {
       association: role === 'Agricultor' ? association : null,
     };
 
-    // Imprimir los datos del usuario y del formulario juntos en la consola
-    console.log('Email:',email)
     console.log('User metadata:', user);
     console.log('Form data:', {documentType, idNumber, role, city, address, phone, association});
     console.log('Combined user data:', userData);
-    if (role == "Agricultor"){
-      const response = await axios.post(`${url_back}/profiles/farmer`, userData);
-      console.log('Usuario registrado de forma correcta:', response.data);      
+    try {
+      let response;
+      if (role === "Agricultor") {
+        response = await axios.post(`${url_back}profiles/farmer`, userData);
+      } else if (role === "Asociación") {
+        response = await axios.post(`${url_back}profiles/association`, userData);
+      } else {
+        response = await axios.post(`${url_back}profiles/customer`, userData);
+      }
+      console.log('Usuario registrado de forma correcta:', response.data);
       setShowModal(true);
-    } else if(role == "Asociación"){
-      const response = await axios.post(`${url_back}/profiles/association`, userData);
-      console.log('Usuario registrado de forma correcta:', response.data);      
-      setShowModal(true);
-    } else{
-      const response = await axios.post(`${url_back}/profiles/customer`, userData);
-      console.log('Usuario registrado de forma correcta:', response.data);      
-      setShowModal(true);
+    } catch (error) {
+      console.error('Error registrando usuario:', error);
     }
-    
   };
 
   return (
@@ -84,8 +79,8 @@ const Register = () => {
           <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un tipo de documento</option>
             {documentTypes.map((dt) => (
-                <option key={dt.id} value={dt.id}>{dt.name}</option>
-              ))}
+              <option key={dt.id} value={dt.id}>{dt.name}</option>
+            ))}
           </Select>
           
           <Label>Número de identificación:</Label>
@@ -108,8 +103,8 @@ const Register = () => {
               <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
                 <option value="" disabled hidden>Seleccionar la asociación</option>
                 {associations.map((dt) => (
-                    <option key={dt.id} value={dt.id}>{dt.name}</option>
-                  ))}
+                  <option key={dt.id} value={dt.id}>{dt.name}</option>
+                ))}
               </Select>
             </>
           )}
@@ -142,7 +137,7 @@ const Register = () => {
       {showModal && (
         <Modal>
           <ModalContent>
-            <h2>Regsitro Exitoso</h2>
+            <h2>Registro Exitoso</h2>
             <p>Te has registrado de forma exitosa.</p>
             <Button onClick={() => setShowModal(false)}>Cerrar</Button>
           </ModalContent>
@@ -251,7 +246,7 @@ const Wrapper = styled.section`
       border-radius: var(--radius);
     }
   }
-`; 
+`;
 const Modal = styled.div`
   position: fixed;
   top: 0;

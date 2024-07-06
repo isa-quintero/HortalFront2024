@@ -44,7 +44,6 @@ export const MagicProvider = ({ children }) => {
       const result = await magic.oauth.getRedirectResult();
       const userMetadata = await magic.user.getMetadata();
       setUser(userMetadata);
-      setEmail(userMetadata.email)
     } catch (error) {
       console.error('Error during getRedirectResult:', error);
     }
