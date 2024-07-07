@@ -40,8 +40,8 @@ export const FilterProvider = ({ children }) => {
     const fetchProductsAndOffers = async () => {
       try {
         const [productsRes, offersRes] = await Promise.all([
-          axios.get(`${url_back}/inventory/products`),
-          axios.get(`${url_back}/inventory/offers`)
+          axios.get(`${url_back}inventory/products`),
+          axios.get(`${url_back}inventory/offers`)
         ]);
 
         const products = productsRes.data;

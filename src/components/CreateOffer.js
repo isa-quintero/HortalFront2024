@@ -59,7 +59,7 @@ const CreateOffer = () => {
         idBlockchain: requestId,  // Incluye el request_id del minting
       };
 
-      const response = await axios.post(`${url_back}inventory/offer`, offerData);
+      const response = await axios.post(`${url_back}inventory/offers`, offerData);
       console.log('Oferta creada exitosamente:', response.data);      console.log('Oferta creada exitosamente');
       setShowModal(true);
 

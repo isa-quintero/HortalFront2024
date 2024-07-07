@@ -1,41 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useMagicContext } from '../context/magic_context';
 import axios from 'axios';
 import CultivoImage from '../assets/hero-bcg-2.jpg'; // Asegúrate de que la ruta sea correcta
+import { url_back } from '../utils/constants';
+
 
 const OffersTable = () => {
-  const [associationId, setAssociationId] = useState(null);
+  const { user } = useMagicContext();
+  const [farmerId, setFarmerId] = useState(null);
   const [offers, setOffers] = useState([]);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
-  // Solicitud para obtener associationId
+  // Solicitud para obtener farmerId
   useEffect(() => {
-    const fetchAssociationId = async () => {
+    const fetchFarmerId = async () => {
       try {
-        const response = await axios.get(`/profiles/farmerid/${idNumber}`);
-        setAssociationId(response.data.associationId); // Ajusta esto según la estructura de tu respuesta
+        const email = user.email;
+        const encodedEmail = encodeURIComponent(email);
+        console.log('Encoded email:', encodedEmail); // Log de depuración
+        const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
+        setFarmerId(response.data.id); // Ajusta esto según la estructura de tu respuesta
+        console.log('Fetched farmerId:', response.data.id);
       } catch (error) {
-        console.error('Error fetching associationId:', error);
+        console.error('Error fetching farmerId:', error);
       }
     };
 
-    fetchAssociationId();
-  }, [idNumber]);
+    if (user && user.email) {
+      fetchFarmerId();
+    } else {
+      console.error('No user or user.email available');
+    }
+  }, [user]);
 
-  // Solicitud para obtener las ofertas usando associationId
+  // Solicitud para obtener las ofertas usando farmerId
   useEffect(() => {
     const fetchOffers = async () => {
-      if (!associationId) return;
+      if (!farmerId) return;
 
       try {
-        const response = await axios.get(`/inventory/price-ranges-association/${associationId}`);
-        setOffers(response.data);
+        console.log('Fetching offers for farmerId:', farmerId);
+        const response = await axios.get(`${url_back}inventory/offers/${farmerId}`);
+        if (error.response.status === 404) {
+          setError('No hay productos disponibles.');
+        } else {
+          setOffers(response.data);
+          setError(null); // Limpiar cualquier error previo si hay ofertas
+        }
+        console.log('Fetched offers:', response.data);
       } catch (error) {
         console.error('Error fetching offers:', error);
+        setError('No hay ofertas disponibles');
       }
     };
 
     fetchOffers();
-  }, [associationId]);
+  }, [farmerId]);
 
   const validateOffers = (offers) => {
     return offers.map((offer) => {
@@ -62,7 +83,6 @@ const OffersTable = () => {
             </p>
             <div className='underline'></div>
           </div>
-          
           <Table>
             <thead>
               <tr>
@@ -75,16 +95,24 @@ const OffersTable = () => {
               </tr>
             </thead>
             <tbody>
-              {validatedOffers.map((offer, index) => (
-                <tr key={index} style={offer.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
-                  <Td>{offer.product}</Td>
-                  <Td>${offer.price}</Td>
-                  <Td>{offer.description}</Td>
-                  <Td>{offer.quantity}</Td>
-                  <Td>{offer.initialDate}</Td>
-                  <Td>{offer.finalDate}</Td>
+              {error ? (
+                <tr>
+                  <Td colSpan="6">
+                    <ErrorMessage>{error}</ErrorMessage>
+                  </Td>
                 </tr>
-              ))}
+              ) : (
+                validatedOffers.map((offer, index) => (
+                  <tr key={index} style={offer.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
+                    <Td>{offer.productId}</Td>
+                    <Td>${offer.price}</Td>
+                    <Td>{offer.description}</Td>
+                    <Td>{offer.amount}</Td>
+                    <Td>{offer.initialDate}</Td>
+                    <Td>{offer.finalDate}</Td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </Table>
         </TableWrapper>
@@ -113,9 +141,9 @@ const ContentWrapper = styled.div`
 `;
 
 const ImageColumn = styled.div`
-    margin-top:5rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
+  margin-top: 5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
   flex: 1; /* Aumenta la proporción del espacio que ocupan las imágenes */
 `;
 
@@ -131,7 +159,6 @@ const TableWrapper = styled.div`
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.9); /* Fondo difuminado */
 `;
-
 
 const Table = styled.table`
   width: 100%;
@@ -149,6 +176,12 @@ const Th = styled.th`
 const Td = styled.td`
   border: 1px solid #ddd;
   padding: 16px; /* Aumenta el padding para hacer las celdas más grandes */
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 1.2rem;
+  margin-top: 20px;
 `;
 
 export default OffersTable;

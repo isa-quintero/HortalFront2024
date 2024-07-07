@@ -1,46 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import CultivoImage from '../assets/cultivo.jpg'; // Asegúrate de que la ruta sea correcta
+import { url_back } from '../utils/constants';
+import { useMagicContext } from '../context/magic_context';
 
 const PriceRangeTable = () => {
-  const [offers, setOffers] = useState([
-    {
-      product: 'Producto 1',
-      initialPrice: '100',
-      finalPrice: '90',
-      initialDate: '2024-07-01',
-      finalDate: '2024-07-10',
-    },
-    {
-      product: 'Producto 2',
-      initialPrice: '200',
-      finalPrice: '180',
-      initialDate: '2024-07-05',
-      finalDate: '2024-07-15',
-    },
-    {
-      product: 'Producto 3',
-      initialPrice: '300',
-      finalPrice: '270',
-      initialDate: '2024-07-10',
-      finalDate: '2024-07-20',
-    },
-  ]);
+  const { user } = useMagicContext();
+  const [associationId, setAssociationId] = useState(null);
+  const [priceRanges, setPriceRanges] = useState([]);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
-  const validateOffers = (offers) => {
-    return offers.map((offer) => {
+  // Solicitud para obtener associationId
+  useEffect(() => {
+    const fetchAssociationId = async () => {
+      try {
+        const email = user.email;
+        console.log('Encoded email:', email); // Log de depuración
+        const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
+        setAssociationId(response.data.id); 
+        console.log('Fetched associationId:', response.data.id);
+      } catch (error) {
+        console.error('Error fetching associationId:', error);
+      }
+    };
+
+    if (user && user.email) {
+      fetchAssociationId();
+    } else {
+      console.error('No user or user.email available');
+    }
+  }, [user]);
+
+  // Solicitud para obtener las ofertas usando farmerId
+  useEffect(() => {
+    const fetchPriceRanges = async () => {
+      if (!associationId) return;
+
+      try {
+        console.log('Fetching priceRanges for associationId:', associationId);
+        const response = await axios.get(`${url_back}inventory/price-ranges/${associationId}`);
+        if (response.status === 404) {
+          setError('No hay productos disponibles.');
+        } else {
+          setPriceRanges(response.data);
+          setError(null); // Limpiar cualquier error previo si hay ofertas
+        }
+        console.log('Fetched offers:', response.data);
+      } catch (error) {
+        console.error('Error fetching offers:', error);
+        setError('No hay ofertas disponibles');
+      }
+    };
+
+    fetchPriceRanges();
+  }, [associationId]);
+
+  const validatePriceRanges = (priceRanges) => {
+    return priceRanges.map((priceRange) => {
       const errors = {};
-      if (parseFloat(offer.initialPrice) > parseFloat(offer.finalPrice)) {
+      if (parseFloat(priceRange.initialPrice) > parseFloat(priceRange.finalPrice)) {
         errors.price = true;
       }
-      if (new Date(offer.initialDate) > new Date(offer.finalDate)) {
+      if (new Date(priceRange.initialDate) > new Date(priceRange.finalDate)) {
         errors.date = true;
       }
-      return { ...offer, errors };
+      return { ...priceRange, errors };
     });
   };
 
-  const validatedOffers = validateOffers(offers);
+  const validatedPriceRanges = validatePriceRanges(priceRanges);
 
   return (
     <Wrapper>
@@ -66,15 +95,23 @@ const PriceRangeTable = () => {
               </tr>
             </thead>
             <tbody>
-              {validatedOffers.map((offer, index) => (
-                <tr key={index} style={offer.errors.price || offer.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
-                  <Td>{offer.product}</Td>
-                  <Td>${offer.initialPrice}</Td>
-                  <Td>${offer.finalPrice}</Td>
-                  <Td>{offer.initialDate}</Td>
-                  <Td>{offer.finalDate}</Td>
+              {error ? (
+                <tr>
+                  <Td colSpan="5">
+                    <ErrorMessage>{error}</ErrorMessage>
+                  </Td>
                 </tr>
-              ))}
+              ) : (
+                validatedPriceRanges.map((priceRange, index) => (
+                  <tr key={index} style={priceRange.errors.price || priceRange.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
+                    <Td>{priceRange.product}</Td>
+                    <Td>${priceRange.initialPrice}</Td>
+                    <Td>${priceRange.finalPrice}</Td>
+                    <Td>{priceRange.initialDate}</Td>
+                    <Td>{priceRange.finalDate}</Td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </Table>
         </TableWrapper>
@@ -138,6 +175,12 @@ const Th = styled.th`
 const Td = styled.td`
   border: 1px solid #ddd;
   padding: 12px; /* Aumenta el padding para hacer las celdas más grandes */
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 1.2rem;
+  margin-top: 20px;
 `;
 
 export default PriceRangeTable;

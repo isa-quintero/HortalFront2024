@@ -56,11 +56,11 @@ const Register = () => {
     try {
       let response;
       if (role === "FARMER") {
-        response = await axios.post(`${url_back}profiles/farmer`, userData);
+        response = await axios.post(`${url_back}profiles/farmers`, userData);
       } else if (role === "ASSOCIATION") {
-        response = await axios.post(`${url_back}profiles/association`, userData);
+        response = await axios.post(`${url_back}profiles/associations`, userData);
       } else {
-        response = await axios.post(`${url_back}profiles/customer`, userData);
+        response = await axios.post(`${url_back}profiles/customers`, userData);
       }
       console.log('Usuario registrado de forma correcta:', response.data);
       setShowModal(true);

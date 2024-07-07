@@ -5,7 +5,6 @@ import { useMagicContext } from '../context/magic_context';
 import { useUserContext } from '../context/user_context';
 import { url_back } from '../utils/constants';
 
-
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { isLoading, user } = useMagicContext();
   const { myUser } = useUserContext();
@@ -14,12 +13,37 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   useEffect(() => {
     const checkUserRegistered = async () => {
       try {
-        //const encodedEmail = encodeURIComponent(user.email);
-        const response = await axios.get(`${url_back}customer-email/${user.email}`);
-        setIsUserRegistered(response.data.exists); // Suponiendo que response.data.exists indica si el usuario existe
+
+        // Promesa para verificar si el usuario está registrado como cliente
+        const customerPromise = axios.get(`${url_back}profiles/customers-emails/${user.email}`);
+
+        // Promesa para verificar si el usuario está registrado como asociación
+        const associationPromise = axios.get(`${url_back}profiles/associations-emails/${user.email}`);
+
+        // Promesa para verificar si el usuario está registrado como agricultor
+        const farmerPromise = axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
+
+        // Esperar todas las promesas
+        const [customerResponse, associationResponse, farmerResponse] = await Promise.all([
+          customerPromise,
+          associationPromise,
+          farmerPromise,
+        ]);
+
+        // Verificar si el usuario está registrado como cliente
+        const isCustomer = customerResponse.data.exists;
+
+        // Verificar si el usuario está registrado como asociación
+        const isAssociation = associationResponse.data.exists;
+
+        // Verificar si el usuario está registrado como agricultor
+        const isFarmer = farmerResponse.data.exists;
+
+        // Si cualquiera de los roles está registrado, establecer isUserRegistered como true
+        setIsUserRegistered(isCustomer || isAssociation || isFarmer);
       } catch (error) {
         console.error('Error checking user registration:', error);
-        setIsUserRegistered(false); // Manejo de error: asumimos que el usuario no está registrado
+        setIsUserRegistered(false); // Manejo de error: asumir que el usuario no está registrado
       }
     };
 
@@ -32,10 +56,10 @@ const PrivateRoute = ({ children, allowedRoles }) => {
     return <div>Loading...</div>;
   }
 
-  // Verifica si la ruta actual es la de registro
+  // Verificar si la ruta actual es la de registro
   const isRegisterRoute = window.location.pathname === '/register';
 
-  // Verifica si el usuario está autenticado y tiene un rol permitido, o si es la ruta de registro o está registrado
+  // Verificar si el usuario está autenticado y tiene un rol permitido, o si es la ruta de registro o está registrado
   const isAllowed = isRegisterRoute || (myUser && allowedRoles.includes(myUser.role)) || isUserRegistered;
 
   return isAllowed ? children : <Navigate to="/" />;
