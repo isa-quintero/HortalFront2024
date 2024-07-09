@@ -20,6 +20,8 @@ import PriceRangeTablePage from './pages/PriceRangeTablePage';
 import OfferTablePage from './pages/OfferTablePage';
 
 function App() {
+  const isRegisterPage = window.location.pathname === '/register';
+
   return (
     <AuthWrapper>
       <Router>
@@ -41,8 +43,8 @@ function App() {
           <Route path='offer' element={<CreateOfferPage />} />
           <Route path='*' element={<Error />} />
         </Routes>
+        {!isRegisterPage && <Footer />}
       </Router>
-      <Footer />
     </AuthWrapper>
   );
 }
