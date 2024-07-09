@@ -6,7 +6,6 @@ import Logo from '../assets/hortalsoft.png';
 import Image from '../assets/hero-bcg.jpeg';
 import { url_back } from '../utils/constants';
 
-
 const Register = () => {
   const { user, getRedirectResult } = useMagicContext();
   const [documentType, setDocumentType] = useState('');
@@ -17,8 +16,11 @@ const Register = () => {
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [association, setAssociation] = useState('');
+  const [name, setName] = useState('');
   const [associations, setAssociations] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,8 +38,29 @@ const Register = () => {
     getRedirectResult(); // Obtener el resultado del redireccionamiento
   }, [getRedirectResult]);
 
+  useEffect(() => {
+    validateForm();
+  }, [documentType, idNumber, role, city, address, phone, association, name]);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!documentType) newErrors.documentType = 'El tipo de documento es obligatorio.';
+    if (!idNumber) newErrors.idNumber = 'El número de identificación es obligatorio.';
+    if (!role) newErrors.role = 'El rol es obligatorio.';
+    if (!city) newErrors.city = 'La ciudad es obligatoria.';
+    if (!address) newErrors.address = 'La dirección es obligatoria.';
+    if (!phone) newErrors.phone = 'El número de teléfono es obligatorio.';
+    if (role === 'FARMER' && !association) newErrors.association = 'La asociación es obligatoria.';
+    if (role === 'ASSOCIATION' && !name) newErrors.name = 'El nombre de la asociación es obligatorio.';
+
+    setErrors(newErrors);
+    setIsFormValid(Object.keys(newErrors).length === 0);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
+
     const userData = {
       emailUser: user.email,
       username: user.email,
@@ -48,10 +71,11 @@ const Register = () => {
       address,
       phone: parseInt(phone),
       association: role === 'FARMER' ? parseInt(association) : null,
+      name: role === 'ASSOCIATION' ? name : null,
     };
 
     console.log('User metadata:', user);
-    console.log('Form data:', {documentType, idNumber, role, city, address, phone, association});
+    console.log('Form data:', { documentType, idNumber, role, city, address, phone, association });
     console.log('Combined user data:', userData);
     try {
       let response;
@@ -68,9 +92,10 @@ const Register = () => {
       console.error('Error registrando usuario:', error);
     }
   };
+
   const closeModalAndRedirect = () => {
     setShowModal(false);
-    window.location.href='/'; // Redirige a la página de inicio
+    window.location.href = '/'; // Redirige a la página de inicio
   };
 
   return (
@@ -80,14 +105,15 @@ const Register = () => {
           Ayúdanos a completar la información de tu perfil, todos los campos son obligatorios:
         </p>
         <RegisterForm onSubmit={handleSubmit}>
-        <Label>Tipo de documento:</Label>
+          <Label>Tipo de documento:</Label>
           <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un tipo de documento</option>
             {documentTypes.map((dt) => (
               <option key={dt.idDocumentType} value={dt.idDocumentType}>{dt.name}</option>
             ))}
           </Select>
-          
+          {errors.documentType && <ErrorText>{errors.documentType}</ErrorText>}
+
           <Label>Número de identificación:</Label>
           <Input
             type="number"
@@ -95,6 +121,8 @@ const Register = () => {
             onChange={(e) => setIdNumber(e.target.value)}
             placeholder="Digita tu número de identificación"
           />
+          {errors.idNumber && <ErrorText>{errors.idNumber}</ErrorText>}
+
           <Label>Rol:</Label>
           <Select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="" disabled hidden>Seleccionar un rol</option>
@@ -102,6 +130,8 @@ const Register = () => {
             <option value="FARMER">Agricultor</option>
             <option value="ASSOCIATION">Asociación</option>
           </Select>
+          {errors.role && <ErrorText>{errors.role}</ErrorText>}
+
           {role === 'FARMER' && (
             <>
               <Label>Asociación a la que pertenece:</Label>
@@ -111,8 +141,23 @@ const Register = () => {
                   <option key={dt.id} value={dt.id}>{dt.name}</option>
                 ))}
               </Select>
+              {errors.association && <ErrorText>{errors.association}</ErrorText>}
             </>
           )}
+
+          {role === 'ASSOCIATION' && (
+            <>
+              <Label>Nombre de la asociación:</Label>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Digita el nombre de la asociación"
+              />
+              {errors.name && <ErrorText>{errors.name}</ErrorText>}
+            </>
+          )}
+
           <Label>Dirección:</Label>
           <Input
             type="text"
@@ -120,11 +165,15 @@ const Register = () => {
             onChange={(e) => setAddress(e.target.value)}
             placeholder="(Ejm: Calle/Carrera 45 #29-35)"
           />
+          {errors.address && <ErrorText>{errors.address}</ErrorText>}
+
           <Label>Ciudad:</Label>
           <Select value={city} onChange={(e) => setCity(e.target.value)}>
             <option value="" disabled hidden>Seleccionar ciudad</option>
             <option value="santuario">El Santuario</option>
           </Select>
+          {errors.city && <ErrorText>{errors.city}</ErrorText>}
+
           <Label>Celular:</Label>
           <Input
             type="tel"
@@ -132,7 +181,9 @@ const Register = () => {
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Digita el número de tu teléfono"
           />
-          <Button type="submit">Guardar</Button>
+          {errors.phone && <ErrorText>{errors.phone}</ErrorText>}
+
+          <Button type="submit" disabled={!isFormValid}>Guardar</Button>
         </RegisterForm>
       </article>
       <article className='img-container'>
@@ -189,6 +240,17 @@ const Button = styled.button`
   border-radius: 5px;
   margin-bottom: 5px;
   cursor: pointer;
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  font-size: 0.875rem;
+  margin-top: -15px;
+  margin-bottom: 10px;
 `;
 
 const Wrapper = styled.section`
@@ -252,6 +314,7 @@ const Wrapper = styled.section`
     }
   }
 `;
+
 const Modal = styled.div`
   position: fixed;
   top: 0;

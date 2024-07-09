@@ -16,7 +16,7 @@ const CreateOffer = () => {
   const [finalDate, setFinalDate] = useState('');
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-  const [formIncomplete, setFormIncomplete] = useState(false);
+  const [formIncomplete, setFormIncomplete] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -29,24 +29,35 @@ const CreateOffer = () => {
       });
   }, []);
 
+  useEffect(() => {
+    const validateForm = () => {
+      if (productId && description && amount && price && initialDate && finalDate) {
+        if (new Date(initialDate) <= new Date(finalDate)) {
+          setFormIncomplete(false);
+          setError(null);
+        } else {
+          setFormIncomplete(true);
+          setError('La fecha inicial no puede ser mayor que la fecha límite.');
+        }
+      } else {
+        setFormIncomplete(true);
+      }
+    };
+
+    validateForm();
+  }, [productId, description, amount, price, initialDate, finalDate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!productId || !description || !amount || !price || !initialDate || !finalDate) {
-      setFormIncomplete(true);
-      return;
-    }
-
-    if (new Date(initialDate) > new Date(finalDate)) {
-      setError('La fecha inicial no puede ser mayor que la fecha límite.');
+    if (formIncomplete) {
+      setError('Por favor complete todos los campos obligatorios.');
       return;
     }
 
     try {
-      // Realiza el minting del NFT
-      const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount),user.publicAddress );
-            
-      // Si el minting es exitoso, crea la oferta
+      const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount), user.publicAddress);
+      
       const offerData = {
         productId: parseInt(productId),
         farmerId: 1,  // Aquí puedes establecer el agricultor según la lógica de tu aplicación
@@ -56,14 +67,12 @@ const CreateOffer = () => {
         initialDate,
         finalDate,
         validity: true,
-        idBlockchain: requestId,  // Incluye el request_id del minting
+        idBlockchain: requestId,
       };
 
       const response = await axios.post(`${url_back}inventory/offers`, offerData);
-      console.log('Oferta creada exitosamente:', response.data);      console.log('Oferta creada exitosamente');
+      console.log('Oferta creada exitosamente:', response.data);
       setShowModal(true);
-
-      // Aquí podrías realizar otras acciones necesarias después de crear la oferta
 
     } catch (error) {
       console.error('Error al crear la oferta:', error);
@@ -77,7 +86,6 @@ const CreateOffer = () => {
       <FormWrapper>
         <WarningMessage>Para poder crear la oferta debe llenar todos los campos marcados como obligatorios.</WarningMessage>
         {error && <ErrorText>{error}</ErrorText>}
-        {formIncomplete && <ErrorText>Por favor complete todos los campos obligatorios.</ErrorText>}
         <RegisterForm onSubmit={handleSubmit}>
           <FormGroup>
             <Label>
@@ -133,7 +141,7 @@ const CreateOffer = () => {
               <Required>*</Required>
             </Label>
             <Input
-              type="date" // Cambiado a 'date' para mostrar solo mes y día
+              type="date"
               value={initialDate}
               onChange={(e) => setInitialDate(e.target.value)}
               placeholder='Seleccione la fecha en la que iniciará su oferta'
@@ -145,13 +153,13 @@ const CreateOffer = () => {
               <Required>*</Required>
             </Label>
             <Input
-              type="date" // Cambiado a 'date' para mostrar solo mes y día
+              type="date"
               value={finalDate}
               onChange={(e) => setFinalDate(e.target.value)}
               placeholder='Seleccione la fecha hasta que su oferta estará vigente'
             />
           </FormGroup>
-          <Button type="submit">Guardar</Button>
+          <Button type="submit" disabled={formIncomplete}>Guardar</Button>
         </RegisterForm>
       </FormWrapper>
       {showModal && (
@@ -221,6 +229,10 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 const ErrorText = styled.p`
