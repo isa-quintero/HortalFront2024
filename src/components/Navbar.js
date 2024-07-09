@@ -1,18 +1,17 @@
-import React from 'react'
-import styled from 'styled-components'
-import logo from '../assets/hortalsoft.png'
-import { FaBars } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
-import CartButtons from './CartButtons'
-import { useProductsContext } from '../context/products_context'
-import { useUserContext } from '../context/user_context'
-import {links,associationLinks,customerLinks,farmerLinks} from '../utils/constants'
+import React from 'react';
+import styled from 'styled-components';
+import logo from '../assets/hortalsoft.png';
+import { FaBars } from 'react-icons/fa';
+import { Link, useLocation } from 'react-router-dom';
+import CartButtons from './CartButtons';
+import { useProductsContext } from '../context/products_context';
+import { useUserContext } from '../context/user_context';
+import { links, associationLinks, customerLinks, farmerLinks } from '../utils/constants';
 
 const Nav = () => {
   const { openSidebar } = useProductsContext();
   const { myUser } = useUserContext();
-  
-  
+  const location = useLocation();
 
   let linksToShow;
   if (myUser?.role === 'CUSTOMER') {
@@ -24,6 +23,10 @@ const Nav = () => {
   } else {
     linksToShow = links;
   }
+
+  // Verificar si estamos en la página de registro
+  const isRegisterPage = location.pathname === '/register';
+
   return (
     <NavContainer>
       <div className='nav-center'>
@@ -35,21 +38,23 @@ const Nav = () => {
             <FaBars />
           </button>
         </div>
-        <ul className='nav-links'>
-          {linksToShow.map((link) => {
-            const { id, text, url } = link;
-            return (
-              <li key={id}>
-                <Link to={url}>{text}</Link>
+        {!isRegisterPage && (
+          <ul className='nav-links'>
+            {linksToShow.map((link) => {
+              const { id, text, url } = link;
+              return (
+                <li key={id}>
+                  <Link to={url}>{text}</Link>
+                </li>
+              );
+            })}
+            {myUser && myUser.role === 'CUSTOMER' && (
+              <li>
+                <Link to='/checkout'>checkout</Link>
               </li>
-            );
-          })}
-          {myUser && myUser.role === "CUSTOMER" &&(
-            <li>
-              <Link to='/checkout'>checkout</Link>
-            </li>
-          )}
-        </ul>
+            )}
+          </ul>
+        )}
         <CartButtons />
       </div>
     </NavContainer>

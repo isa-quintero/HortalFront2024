@@ -28,6 +28,8 @@ const Sidebar = () => {
       sidebarLinks = links;
   }
 
+  const isRegisterPage = window.location.pathname === '/register';
+
   return (
     <SidebarContainer>
       <aside className={`${isSidebarOpen ? 'sidebar show-sidebar' : 'sidebar'}`}>
@@ -37,22 +39,24 @@ const Sidebar = () => {
             <FaTimes />
           </button>
         </div>
-        <ul className='links'>
-          {sidebarLinks.map(({ id, text, url }) => (
-            <li key={id}>
-              <Link to={url} onClick={closeSidebar}>
-                {text}
-              </Link>
-            </li>
-          ))}
-          {myUser && myUser.role === "CUSTOMER" && (
-            <li>
-              <Link to='/checkout' onClick={closeSidebar}>
-                Checkout
-              </Link>
-            </li>
-          )}
-        </ul>
+        {!isRegisterPage && ( // Mostrar los enlaces solo si no estamos en la página de registro
+          <ul className='links'>
+            {sidebarLinks.map(({ id, text, url }) => (
+              <li key={id}>
+                <Link to={url} onClick={closeSidebar}>
+                  {text}
+                </Link>
+              </li>
+            ))}
+            {myUser && myUser.role === 'CUSTOMER' && (
+              <li>
+                <Link to='/checkout' onClick={closeSidebar}>
+                  Checkout
+                </Link>
+              </li>
+            )}
+          </ul>
+        )}
         <CartButtons />
       </aside>
     </SidebarContainer>

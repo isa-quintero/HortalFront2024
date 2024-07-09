@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useMagicContext } from '../context/magic_context';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -20,6 +20,7 @@ const Register = () => {
   const [associations, setAssociations] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
+  const [formIncomplete, setFormIncomplete] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -38,11 +39,7 @@ const Register = () => {
     getRedirectResult(); // Obtener el resultado del redireccionamiento
   }, [getRedirectResult]);
 
-  useEffect(() => {
-    validateForm();
-  }, [documentType, idNumber, role, city, address, phone, association, name]);
-
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
     if (!documentType) newErrors.documentType = 'El tipo de documento es obligatorio.';
     if (!idNumber) newErrors.idNumber = 'El número de identificación es obligatorio.';
@@ -55,10 +52,23 @@ const Register = () => {
 
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
-  };
+    setFormIncomplete(Object.keys(newErrors).length > 0);
+  }, [documentType, idNumber, role, city, address, phone, association, name]);
+
+  useEffect(() => {
+    validateForm();
+  }, [validateForm]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formIncomplete) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        form: 'Por favor complete todos los campos obligatorios.',
+      }));
+      return;
+    }
+
     if (!isFormValid) return;
 
     const userData = {
@@ -104,84 +114,116 @@ const Register = () => {
         <p>
           Ayúdanos a completar la información de tu perfil, todos los campos son obligatorios:
         </p>
+        {formIncomplete && <ErrorText>{errors.form}</ErrorText>}
         <RegisterForm onSubmit={handleSubmit}>
-          <Label>Tipo de documento:</Label>
-          <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
-            <option value="" disabled hidden>Seleccionar un tipo de documento</option>
-            {documentTypes.map((dt) => (
-              <option key={dt.idDocumentType} value={dt.idDocumentType}>{dt.name}</option>
-            ))}
-          </Select>
-          {errors.documentType && <ErrorText>{errors.documentType}</ErrorText>}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Tipo de documento:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
+              <option value="" disabled hidden>Seleccionar un tipo de documento</option>
+              {documentTypes.map((dt) => (
+                <option key={dt.idDocumentType} value={dt.idDocumentType}>{dt.name}</option>
+              ))}
+            </Select>
+          </FormGroup>
 
-          <Label>Número de identificación:</Label>
-          <Input
-            type="number"
-            value={idNumber}
-            onChange={(e) => setIdNumber(e.target.value)}
-            placeholder="Digita tu número de identificación"
-          />
-          {errors.idNumber && <ErrorText>{errors.idNumber}</ErrorText>}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Número de identificación:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Input
+              type="number"
+              value={idNumber}
+              onChange={(e) => setIdNumber(e.target.value)}
+              placeholder="Digita tu número de identificación"
+            />
+          </FormGroup>
 
-          <Label>Rol:</Label>
-          <Select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="" disabled hidden>Seleccionar un rol</option>
-            <option value="CUSTOMER">Cliente</option>
-            <option value="FARMER">Agricultor</option>
-            <option value="ASSOCIATION">Asociación</option>
-          </Select>
-          {errors.role && <ErrorText>{errors.role}</ErrorText>}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Rol:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="" disabled hidden>Seleccionar un rol</option>
+              <option value="CUSTOMER">Cliente</option>
+              <option value="FARMER">Agricultor</option>
+              <option value="ASSOCIATION">Asociación</option>
+            </Select>
+          </FormGroup>
 
           {role === 'FARMER' && (
             <>
-              <Label>Asociación a la que pertenece:</Label>
-              <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
-                <option value="" disabled hidden>Seleccionar la asociación</option>
-                {associations.map((dt) => (
-                  <option key={dt.id} value={dt.id}>{dt.name}</option>
-                ))}
-              </Select>
-              {errors.association && <ErrorText>{errors.association}</ErrorText>}
+              <FormGroup>
+                <LabelContainer>
+                  <Label>Asociación a la que pertenece:</Label>
+                  <Required>*</Required>
+                </LabelContainer>
+                <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
+                  <option value="" disabled hidden>Seleccionar la asociación</option>
+                  {associations.map((dt) => (
+                    <option key={dt.id} value={dt.id}>{dt.name}</option>
+                  ))}
+                </Select>
+              </FormGroup>
             </>
           )}
 
           {role === 'ASSOCIATION' && (
             <>
-              <Label>Nombre de la asociación:</Label>
-              <Input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Digita el nombre de la asociación"
-              />
-              {errors.name && <ErrorText>{errors.name}</ErrorText>}
+              <FormGroup>
+                <LabelContainer>
+                  <Label>Nombre de la asociación:</Label>
+                  <Required>*</Required>
+                </LabelContainer>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Digita el nombre de la asociación"
+                />
+              </FormGroup>
             </>
           )}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Dirección:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="(Ejm: Calle/Carrera 45 #29-35)"
+            />
+          </FormGroup>
 
-          <Label>Dirección:</Label>
-          <Input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="(Ejm: Calle/Carrera 45 #29-35)"
-          />
-          {errors.address && <ErrorText>{errors.address}</ErrorText>}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Ciudad:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Select value={city} onChange={(e) => setCity(e.target.value)}>
+              <option value="" disabled hidden>Seleccionar ciudad</option>
+              <option value="santuario">El Santuario</option>
+            </Select>
+          </FormGroup>
 
-          <Label>Ciudad:</Label>
-          <Select value={city} onChange={(e) => setCity(e.target.value)}>
-            <option value="" disabled hidden>Seleccionar ciudad</option>
-            <option value="santuario">El Santuario</option>
-          </Select>
-          {errors.city && <ErrorText>{errors.city}</ErrorText>}
-
-          <Label>Celular:</Label>
-          <Input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Digita el número de tu teléfono"
-          />
-          {errors.phone && <ErrorText>{errors.phone}</ErrorText>}
+          <FormGroup>
+            <LabelContainer>
+              <Label>Celular:</Label>
+              <Required>*</Required>
+            </LabelContainer>
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Digita el número de tu teléfono"
+            />
+          </FormGroup>
 
           <Button type="submit" disabled={!isFormValid}>Guardar</Button>
         </RegisterForm>
@@ -231,6 +273,15 @@ const Select = styled.select`
   border-radius: 5px;
 `;
 
+const LabelContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+`;
+
 const Button = styled.button`
   width: 100%;
   background-color: #4CAF50;
@@ -251,6 +302,10 @@ const ErrorText = styled.p`
   font-size: 0.875rem;
   margin-top: -15px;
   margin-bottom: 10px;
+`;
+const Required = styled.span`
+  color: red;
+  margin-left: 5px;
 `;
 
 const Wrapper = styled.section`

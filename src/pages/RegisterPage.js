@@ -9,8 +9,7 @@ const RegisterPage = () => {
 
   const handleFormSubmit = (data) => {
     console.log('Datos del formulario:', data);
-    // Aquí puedes manejar el almacenamiento de los datos, por ejemplo, enviándolos a una API
-    // Supongamos que la API devuelve los datos del usuario actualizados
+    
     const updatedUser = { ...data, role: data.role, city: data.city, address: data.address, phone: data.phone };
     setUser(updatedUser);
 
