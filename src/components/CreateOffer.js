@@ -9,6 +9,7 @@ import { useMagicContext } from '../context/magic_context';
 const CreateOffer = () => {
   const { user } = useMagicContext();
   const [productId, setProductId] = useState('');
+  const [farmerId, setFarmerId] = useState(null);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
@@ -30,6 +31,25 @@ const CreateOffer = () => {
   }, []);
 
   useEffect(() => {
+    const fetchFarmerId = async () => {
+      try {
+        const email = user.email;
+        const encodedEmail = encodeURIComponent(email);
+        console.log('Encoded email:', encodedEmail); // Log de depuración
+        const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
+        setFarmerId(response.data.id); // Ajusta esto según la estructura de tu respuesta
+        console.log('Fetched farmerId:', response.data.id);
+      } catch (error) {
+        console.error('Error fetching farmerId:', error);
+      }
+    };
+
+    if (user && user.email) {
+      fetchFarmerId();
+    } else {
+      console.error('No user or user.email available');
+    }
+  
     const validateForm = () => {
       if (productId && description && amount && price && initialDate && finalDate) {
         if (new Date(initialDate) <= new Date(finalDate)) {
@@ -45,7 +65,7 @@ const CreateOffer = () => {
     };
 
     validateForm();
-  }, [productId, description, amount, price, initialDate, finalDate]);
+  }, [productId, description, amount, price, initialDate, finalDate,user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +80,7 @@ const CreateOffer = () => {
       
       const offerData = {
         productId: parseInt(productId),
-        farmerId: 1,  // Aquí puedes establecer el agricultor según la lógica de tu aplicación
+        farmerId: farmerId,
         description,
         amount: parseInt(amount),
         price: parseFloat(price),

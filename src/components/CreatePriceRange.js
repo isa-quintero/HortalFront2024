@@ -1,12 +1,15 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CultivoImage from '../assets/cultivo.jpg';
 import { url_back } from '../utils/constants';
 import axios from 'axios';
+import { useMagicContext } from '../context/magic_context';
 
 
 
 const CreatePriceRange = () => {
+  const { user } = useMagicContext();
+  const [associationId, setAssociationId] = useState(null);
   const [productId, setProductId] = useState('');
   const [price, setPrice] = useState('');
   const [finalPrice, setFinalPrice] = useState('');
@@ -18,14 +21,32 @@ const CreatePriceRange = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get(`${url_back}/inventory/products`)
+    const fetchAssociationId = async () => {
+      try {
+        const email = user.email;
+        console.log('Encoded email:', email); // Log de depuración
+        const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
+        setAssociationId(response.data.id); 
+        console.log('Fetched associationId:', response.data.id);
+      } catch (error) {
+        console.error('Error fetching associationId:', error);
+      }
+    };
+
+    if (user && user.email) {
+      fetchAssociationId();
+    } else {
+      console.error('No user or user.email available');
+    }
+
+    axios.get(`${url_back}inventory/products`)
       .then(response => {
         setProducts(response.data);
       })
       .catch(error => {
         console.error('Error fetching products:', error);
       });
-  }, []);
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,18 +82,21 @@ const CreatePriceRange = () => {
     setShowModal(true);
 
     const offerData = {
-      productId: parseInt(productId), // Convertir a entero si es necesario
-      farmerId: 1, // Aquí puedes establecer el agricultor según la lógica de tu aplicación
-      price: parseFloat(price), // Convertir a flotante si es necesario
-      finalPrice: parseFloat(finalPrice), // Convertir a flotante si es necesario
+      productId: parseInt(productId),
+      associationId: associationId,
+      price: parseFloat(price),
+      finalPrice: parseFloat(finalPrice),
       initialDate,
       finalDate,
-      validity: true, // Puedes establecer este valor según la lógica de tu aplicación
+      validity: true,
       idBlockchain: ''
     };
 
     console.log('Oferta creada:', offerData);
   };
+
+  // Determinar si el botón debe estar deshabilitado
+  const isDisabled = !productId || !price || !finalPrice || !initialDate || !finalDate || Object.keys(errors).length > 0;
 
   return (
     <Wrapper>
@@ -173,13 +197,13 @@ const CreatePriceRange = () => {
               onFocus={() => setErrors({ ...errors, finalDate: '' })}
             />
           </FormGroup>
-          <Button type="submit">Guardar</Button>
+          <Button type="submit" disabled={isDisabled}>Guardar</Button>
         </RegisterForm>
         {showModal && (
           <Modal>
             <ModalContent>
               <p><strong>Se ha creado el rango de precios de forma exitosa</strong></p>
-              <CloseButton onClick={() => setShowModal(false) }>Cerrar</CloseButton>
+              <CloseButton onClick={() => setShowModal(false)}>Cerrar</CloseButton>
             </ModalContent>
           </Modal>
         )}
@@ -282,6 +306,7 @@ const Button = styled.button`
   cursor: pointer;
   font-size: 16px;
   margin-top: 20px;
+  opacity: ${props => props.disabled ? '0.5' : '1'}; /* Cambia la opacidad si está deshabilitado */
 `;
 
 const Modal = styled.div`
