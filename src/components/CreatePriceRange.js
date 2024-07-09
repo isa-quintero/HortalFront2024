@@ -26,8 +26,8 @@ const CreatePriceRange = () => {
         const email = user.email;
         console.log('Encoded email:', email); // Log de depuración
         const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
-        setAssociationId(response.data.id); 
-        console.log('Fetched associationId:', response.data.id);
+        setAssociationId(response.data.idUser); 
+        console.log('Fetched associationId:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching associationId:', error);
       }
@@ -48,27 +48,24 @@ const CreatePriceRange = () => {
       });
   }, [user]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit  = async (e) => {
     e.preventDefault();
-
-    // Validación de los campos
+  
     const newErrors = {};
     if (!productId || !price || !finalPrice || !initialDate || !finalDate) {
       newErrors.form = 'Por favor, rellene todos los campos obligatorios.';
     }
-
-    // Validación de lógica de negocio
+  
     if (parseFloat(price) > parseFloat(finalPrice)) {
       newErrors.price = 'El precio inicial no puede ser mayor que el precio final';
       newErrors.finalPrice = 'El precio final no puede ser menor que el precio inicial';
     }
-
+  
     if (new Date(initialDate) > new Date(finalDate)) {
       newErrors.initialDate = 'La fecha inicial no puede ser mayor que la fecha final';
       newErrors.finalDate = 'La fecha final no puede ser menor que la fecha inicial';
     }
-
-    // Determinar mensaje de error final
+  
     if (Object.keys(newErrors).length > 0) {
       if (newErrors.form) {
         setFormMessage(newErrors.form);
@@ -76,27 +73,36 @@ const CreatePriceRange = () => {
       setErrors(newErrors);
       return;
     }
-
+  
     setErrors({});
     setFormMessage('');
     setShowModal(true);
-
-    const offerData = {
-      productId: parseInt(productId),
-      associationId: associationId,
-      price: parseFloat(price),
-      finalPrice: parseFloat(finalPrice),
-      initialDate,
-      finalDate,
-      validity: true,
-      idBlockchain: ''
+    try{
+      const priceRangeData = {
+        productId: parseInt(productId),
+        associationId: associationId,
+        price: parseFloat(price),
+        finalPrice: parseFloat(finalPrice),
+        initialDate,
+        finalDate,
+        validity: true,
+        idBlockchain: ''
+      };
+      
+      const response = await axios.post(`${url_back}inventory/price-ranges`, priceRangeData);
+      console.log('Rango de precios creado:', response.data);
+      setShowModal(true);
+      
+    }catch (error) {
+      console.error('Error al crear la oferta:', error);
+      setErrors('Error al crear la oferta. Por favor, inténtalo de nuevo.');
+    }
+    
     };
-
-    console.log('Oferta creada:', offerData);
-  };
+  
 
   // Determinar si el botón debe estar deshabilitado
-  const isDisabled = !productId || !price || !finalPrice || !initialDate || !finalDate || Object.keys(errors).length > 0;
+  const isDisabled = !productId || !price || !finalPrice || !initialDate || !finalDate || Object.values(errors).some(error => error !== '');
 
   return (
     <Wrapper>
@@ -131,8 +137,12 @@ const CreatePriceRange = () => {
               <Input
                 type="text"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                onFocus={() => setErrors({ ...errors, price: '' })}
+                onChange={(e) => {
+                  setPrice(e.target.value);
+                  if (errors.price) {
+                    setErrors({ ...errors, price: '' });
+                  }
+                }}
               />
             </FormGroup>
             <FormGroup>
@@ -140,7 +150,12 @@ const CreatePriceRange = () => {
               <Input
                 type="text"
                 value={finalPrice}
-                onChange={(e) => setFinalPrice(e.target.value)}
+                onChange={(e) => {
+                  setFinalPrice(e.target.value);
+                  if (errors.finalPrice) {
+                    setErrors({ ...errors, finalPrice: '' });
+                  }
+                }}
                 onBlur={() => {
                   if (parseFloat(price) > parseFloat(finalPrice)) {
                     setErrors((prevErrors) => ({
@@ -167,8 +182,12 @@ const CreatePriceRange = () => {
             <Input
               type="date"
               value={initialDate}
-              onChange={(e) => setInitialDate(e.target.value)}
-              onFocus={() => setErrors({ ...errors, initialDate: '' })}
+              onChange={(e) => {
+                setInitialDate(e.target.value);
+                if (errors.initialDate) {
+                  setErrors({ ...errors, initialDate: '' });
+                }
+              }}
             />
           </FormGroup>
           <FormGroup>
@@ -176,7 +195,12 @@ const CreatePriceRange = () => {
             <Input
               type="date"
               value={finalDate}
-              onChange={(e) => setFinalDate(e.target.value)}
+              onChange={(e) => {
+                setFinalDate(e.target.value);
+                if (errors.finalDate) {
+                  setErrors({ ...errors, finalDate: '' });
+                }
+              }}
               onBlur={() => {
                 if (new Date(initialDate) > new Date(finalDate)) {
                   setErrors((prevErrors) => ({
@@ -209,7 +233,7 @@ const CreatePriceRange = () => {
         )}
       </FormWrapper>
     </Wrapper>
-  );
+  );  
 };
 
 const Wrapper = styled.div`

@@ -72,15 +72,15 @@ const Register = () => {
     if (!isFormValid) return;
 
     const userData = {
-      emailUser: user.email,
+      email: user.email,
       username: user.email,
       documentTypeId: parseInt(documentType),
       idNumber: parseInt(idNumber),
       role,
       city,
       address,
-      phone: parseInt(phone),
-      association: role === 'FARMER' ? parseInt(association) : null,
+      phoneNumber: parseInt(phone),
+      associationId: role === 'FARMER' ? parseInt(association) : null,
       name: role === 'ASSOCIATION' ? name : null,
     };
 
