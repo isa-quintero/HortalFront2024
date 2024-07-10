@@ -15,7 +15,7 @@ const Register = () => {
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-  const [association, setAssociation] = useState('');
+  const [associationId, setAssociationId] = useState('');
   const [name, setName] = useState('');
   const [associations, setAssociations] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -47,13 +47,13 @@ const Register = () => {
     if (!city) newErrors.city = 'La ciudad es obligatoria.';
     if (!address) newErrors.address = 'La dirección es obligatoria.';
     if (!phone) newErrors.phone = 'El número de teléfono es obligatorio.';
-    if (role === 'FARMER' && !association) newErrors.association = 'La asociación es obligatoria.';
+    if (role === 'FARMER' && !associationId) newErrors.associationId = 'La asociación es obligatoria.';
     if (role === 'ASSOCIATION' && !name) newErrors.name = 'El nombre de la asociación es obligatorio.';
 
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
     setFormIncomplete(Object.keys(newErrors).length > 0);
-  }, [documentType, idNumber, role, city, address, phone, association, name]);
+  }, [documentType, idNumber, role, city, address, phone, associationId, name]);
 
   useEffect(() => {
     validateForm();
@@ -80,12 +80,12 @@ const Register = () => {
       city,
       address,
       phoneNumber: parseInt(phone),
-      associationId: role === 'FARMER' ? parseInt(association) : null,
-      name: role === 'ASSOCIATION' ? name : null,
+      associationId: role === 'FARMER' ? parseInt(associationId) : 0,
+      name: role === 'ASSOCIATION' ? name : "",
     };
 
     console.log('User metadata:', user);
-    console.log('Form data:', { documentType, idNumber, role, city, address, phone, association });
+    console.log('Form data:', { documentType, idNumber, role, city, address, phone, associationId });
     console.log('Combined user data:', userData);
     try {
       let response;
@@ -162,10 +162,10 @@ const Register = () => {
                   <Label>Asociación a la que pertenece:</Label>
                   <Required>*</Required>
                 </LabelContainer>
-                <Select value={association} onChange={(e) => setAssociation(e.target.value)}>
+                <Select value={associationId} onChange={(e) => setAssociationId(e.target.value)}>
                   <option value="" disabled hidden>Seleccionar la asociación</option>
                   {associations.map((dt) => (
-                    <option key={dt.id} value={dt.id}>{dt.name}</option>
+                    <option key={dt.idUser} value={dt.idUser}>{dt.name}</option>
                   ))}
                 </Select>
               </FormGroup>

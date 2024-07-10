@@ -9,6 +9,7 @@ const PriceRangeTable = () => {
   const { user } = useMagicContext();
   const [associationId, setAssociationId] = useState(null);
   const [priceRanges, setPriceRanges] = useState([]);
+  const [productNames, setProductNames] = useState({});
   const [error, setError] = useState(null); // Estado para manejar errores
 
   // Solicitud para obtener associationId
@@ -18,8 +19,8 @@ const PriceRangeTable = () => {
         const email = user.email;
         console.log('Encoded email:', email); // Log de depuración
         const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
-        setAssociationId(response.data.id); 
-        console.log('Fetched associationId:', response.data.id);
+        setAssociationId(response.data.idUser); 
+        console.log('Fetched associationId:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching associationId:', error);
       }
@@ -32,14 +33,32 @@ const PriceRangeTable = () => {
     }
   }, [user]);
 
-  // Solicitud para obtener las ofertas usando farmerId
+  // Solicitud para obtener los nombres de los productos
+  useEffect(() => {
+    const fetchProductNames = async () => {
+      try {
+        const response = await axios.get(`${url_back}inventory/products`);
+        const names = response.data.reduce((acc, product) => {
+          acc[product.id] = product.name;
+          return acc;
+        }, {});
+        setProductNames(names);
+      } catch (error) {
+        console.error('Error fetching product names:', error);
+      }
+    };
+
+    fetchProductNames();
+  }, []);
+
+  // Solicitud para obtener los rangos de precios usando associationId
   useEffect(() => {
     const fetchPriceRanges = async () => {
       if (!associationId) return;
 
       try {
         console.log('Fetching priceRanges for associationId:', associationId);
-        const response = await axios.get(`${url_back}inventory/price-ranges/${associationId}`);
+        const response = await axios.get(`${url_back}inventory/price-ranges-associations/${associationId}`);
         if (response.status === 404) {
           setError('No hay productos disponibles.');
         } else {
@@ -104,9 +123,9 @@ const PriceRangeTable = () => {
               ) : (
                 validatedPriceRanges.map((priceRange, index) => (
                   <tr key={index} style={priceRange.errors.price || priceRange.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
-                    <Td>{priceRange.product}</Td>
-                    <Td>${priceRange.initialPrice}</Td>
-                    <Td>${priceRange.finalPrice}</Td>
+                    <Td>{(productNames[priceRange.productId] || 'Producto Desconocido').toUpperCase()}</Td>
+                    <Td>${priceRange.initialRange}</Td>
+                    <Td>${priceRange.finalRange}</Td>
                     <Td>{priceRange.initialDate}</Td>
                     <Td>{priceRange.finalDate}</Td>
                   </tr>

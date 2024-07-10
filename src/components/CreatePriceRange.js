@@ -81,12 +81,11 @@ const CreatePriceRange = () => {
       const priceRangeData = {
         productId: parseInt(productId),
         associationId: associationId,
-        price: parseFloat(price),
-        finalPrice: parseFloat(finalPrice),
-        initialDate,
-        finalDate,
+        initialRange: parseInt(price),
+        finalRange: parseInt(finalPrice),
+        initialDate: new Date(initialDate),
+        finalDate: new Date(finalDate),
         validity: true,
-        idBlockchain: ''
       };
       
       const response = await axios.post(`${url_back}inventory/price-ranges`, priceRangeData);
@@ -98,6 +97,11 @@ const CreatePriceRange = () => {
       setErrors('Error al crear la oferta. Por favor, inténtalo de nuevo.');
     }
     
+    };
+
+    const closeModalAndRedirect = () => {
+      setShowModal(false);
+      window.location.href = '/'; // Redirige a la página de inicio
     };
   
 
@@ -125,9 +129,9 @@ const CreatePriceRange = () => {
               onChange={(e) => setProductId(e.target.value)}
               onFocus={() => setErrors({ ...errors, productId: '' })}
             >
-              <option value="">Seleccione un producto</option>
+              <option value="" disabled hidden>Seleccione un producto</option>
               {products.map((prod) => (
-                <option key={prod.id} value={prod.id}>{prod.name}</option>
+                <option key={prod.id} value={prod.id}>{prod.name.toUpperCase()}</option>
               ))}
             </Select>
           </FormGroup>
@@ -227,7 +231,7 @@ const CreatePriceRange = () => {
           <Modal>
             <ModalContent>
               <p><strong>Se ha creado el rango de precios de forma exitosa</strong></p>
-              <CloseButton onClick={() => setShowModal(false)}>Cerrar</CloseButton>
+              <CloseButton onClick={closeModalAndRedirect}>Cerrar</CloseButton>
             </ModalContent>
           </Modal>
         )}

@@ -113,9 +113,9 @@ const CreateOffer = () => {
               <Required>*</Required>
             </Label>
             <Select value={productId} onChange={(e) => setProductId(e.target.value)}>
-              <option value="">Seleccione un producto</option>
+              <option value=""disabled hidden>Seleccione un producto</option>
               {products.map((prod) => (
-                <option key={prod.id} value={prod.id}>{prod.name}</option>
+                <option key={prod.id} value={prod.id}>{prod.name.toUpperCase()}</option>
               ))}
             </Select>
           </FormGroup>
