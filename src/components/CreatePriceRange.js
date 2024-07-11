@@ -93,8 +93,8 @@ const CreatePriceRange = () => {
       setShowModal(true);
       
     }catch (error) {
-      console.error('Error al crear la oferta:', error);
-      setErrors('Error al crear la oferta. Por favor, inténtalo de nuevo.');
+      console.error('Error al crear el rango de precios:', error);
+      setErrors('Error al crear el rango de precios. Por favor, inténtalo de nuevo.');
     }
     
     };
