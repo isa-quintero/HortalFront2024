@@ -5,11 +5,11 @@ import axios from 'axios';
 import CultivoImage from '../assets/hero-bcg-2.jpg'; // Asegúrate de que la ruta sea correcta
 import { url_back } from '../utils/constants';
 
-
 const OffersTable = () => {
   const { user } = useMagicContext();
   const [farmerId, setFarmerId] = useState(null);
   const [offers, setOffers] = useState([]);
+  const [productNames, setProductNames] = useState({});
   const [error, setError] = useState(null); // Estado para manejar errores
 
   // Solicitud para obtener farmerId
@@ -19,9 +19,9 @@ const OffersTable = () => {
         const email = user.email;
         const encodedEmail = encodeURIComponent(email);
         console.log('Encoded email:', encodedEmail); // Log de depuración
-        const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
-        setFarmerId(response.data.id); // Ajusta esto según la estructura de tu respuesta
-        console.log('Fetched farmerId:', response.data.id);
+        const response = await axios.get(`${url_back}profiles/farmers-emails/${encodedEmail}`);
+        setFarmerId(response.data.idUser); // Ajusta esto según la estructura de tu respuesta
+        console.log('Fetched farmerId:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching farmerId:', error);
       }
@@ -34,6 +34,23 @@ const OffersTable = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const fetchProductNames = async () => {
+      try {
+        const response = await axios.get(`${url_back}inventory/products`);
+        const names = response.data.reduce((acc, product) => {
+          acc[product.id] = product.name;
+          return acc;
+        }, {});
+        setProductNames(names);
+      } catch (error) {
+        console.error('Error fetching product names:', error);
+      }
+    };
+
+    fetchProductNames();
+  }, []);
+
   // Solicitud para obtener las ofertas usando farmerId
   useEffect(() => {
     const fetchOffers = async () => {
@@ -41,13 +58,9 @@ const OffersTable = () => {
 
       try {
         console.log('Fetching offers for farmerId:', farmerId);
-        const response = await axios.get(`${url_back}inventory/offers/${farmerId}`);
-        if (error.response.status === 404) {
-          setError('No hay productos disponibles.');
-        } else {
-          setOffers(response.data);
-          setError(null); // Limpiar cualquier error previo si hay ofertas
-        }
+        const response = await axios.get(`${url_back}inventory/offers-farmers/${farmerId}`);
+        setOffers(response.data);
+        setError(null); // Limpiar cualquier error previo si hay ofertas
         console.log('Fetched offers:', response.data);
       } catch (error) {
         console.error('Error fetching offers:', error);
@@ -87,9 +100,9 @@ const OffersTable = () => {
             <thead>
               <tr>
                 <Th>Producto</Th>
-                <Th>Precio</Th>
+                <Th>Precio (Por kilo)</Th>
                 <Th>Descripción</Th>
-                <Th>Cantidad</Th>
+                <Th>Cantidad (Kilo)</Th>
                 <Th>Fecha Inicial</Th>
                 <Th>Fecha Final</Th>
               </tr>
@@ -104,12 +117,12 @@ const OffersTable = () => {
               ) : (
                 validatedOffers.map((offer, index) => (
                   <tr key={index} style={offer.errors.date ? { backgroundColor: '#ffe6e6' } : {}}>
-                    <Td>{offer.productId}</Td>
+                    <Td>{(productNames[offer.productId] || 'Producto Desconocido').toUpperCase()}</Td>
                     <Td>${offer.price}</Td>
                     <Td>{offer.description}</Td>
                     <Td>{offer.amount}</Td>
-                    <Td>{offer.initialDate}</Td>
-                    <Td>{offer.finalDate}</Td>
+                    <Td>{new Date(offer.initialDate).toLocaleDateString()}</Td>
+                    <Td>{new Date(offer.finalDate).toLocaleDateString()}</Td>
                   </tr>
                 ))
               )}

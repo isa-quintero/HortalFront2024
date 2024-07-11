@@ -126,8 +126,8 @@ const PriceRangeTable = () => {
                     <Td>{(productNames[priceRange.productId] || 'Producto Desconocido').toUpperCase()}</Td>
                     <Td>${priceRange.initialRange}</Td>
                     <Td>${priceRange.finalRange}</Td>
-                    <Td>{priceRange.initialDate}</Td>
-                    <Td>{priceRange.finalDate}</Td>
+                    <Td>{new Date(priceRange.initialDate).toLocaleDateString()}</Td>
+                    <Td>{new Date(priceRange.initialDate).toLocaleDateString()}</Td>
                   </tr>
                 ))
               )}

@@ -9,7 +9,7 @@ import { useMagicContext } from '../context/magic_context';
 const CreateOffer = () => {
   const { user } = useMagicContext();
   const [productId, setProductId] = useState('');
-  const [farmerId, setFarmerId] = useState(null);
+  const [farmer, setFarmer] = useState(null);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
@@ -33,14 +33,11 @@ const CreateOffer = () => {
   useEffect(() => {
     const fetchFarmerId = async () => {
       try {
-        const email = user.email;
-        const encodedEmail = encodeURIComponent(email);
-        console.log('Encoded email:', encodedEmail); // Log de depuración
         const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
-        setFarmerId(response.data.id); // Ajusta esto según la estructura de tu respuesta
-        console.log('Fetched farmerId:', response.data.id);
+        setFarmer(response.data.idUser); // Ajusta esto según la estructura de tu respuesta
+        console.log('Fetched farmer:', response.data.idUser);
       } catch (error) {
-        console.error('Error fetching farmerId:', error);
+        console.error('Error fetching farmer:', error);
       }
     };
 
@@ -76,18 +73,18 @@ const CreateOffer = () => {
     }
 
     try {
-      const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount), user.publicAddress);
+      //const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount), user.publicAddress);
       
       const offerData = {
         productId: parseInt(productId),
-        farmerId: farmerId,
+        farmer: farmer,
         description,
         amount: parseInt(amount),
         price: parseFloat(price),
-        initialDate,
-        finalDate,
+        initialDate: new Date(initialDate),
+        finalDate: new Date(finalDate),
         validity: true,
-        idBlockchain: requestId,
+        idBlockchain: 0,
       };
 
       const response = await axios.post(`${url_back}inventory/offers`, offerData);
@@ -98,6 +95,11 @@ const CreateOffer = () => {
       console.error('Error al crear la oferta:', error);
       setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');
     }
+  };
+
+  const closeModalAndRedirect = () => {
+    setShowModal(false);
+    window.location.href = '/'; // Redirige a la página de inicio
   };
 
   return (
@@ -133,7 +135,7 @@ const CreateOffer = () => {
           </FormGroup>
           <FormGroup>
             <Label>
-              Cantidad
+              Cantidad (Kilos)
               <Required>*</Required>
             </Label>
             <Input
@@ -145,7 +147,7 @@ const CreateOffer = () => {
           </FormGroup>
           <FormGroup>
             <Label>
-              Precio
+              Precio (Por kilo)
               <Required>*</Required>
             </Label>
             <Input
@@ -187,7 +189,7 @@ const CreateOffer = () => {
           <ModalContent>
             <h2>Oferta enviada</h2>
             <p>Tu oferta ha sido creada exitosamente.</p>
-            <Button onClick={() => setShowModal(false)}>Cerrar</Button>
+            <Button onClick={closeModalAndRedirect}>Cerrar</Button>
           </ModalContent>
         </Modal>
       )}
