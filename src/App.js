@@ -18,6 +18,7 @@ import CreateOfferPage from './pages/CreateOfferPage';
 import CreatePriceRangePage from './pages/CreatePriceRangePage';
 import PriceRangeTablePage from './pages/PriceRangeTablePage';
 import OfferTablePage from './pages/OfferTablePage';
+import RedirectLogic from './pages/RedirectLogic';
 
 function App() {
   const isRegisterPage = window.location.pathname === '/register';
@@ -31,6 +32,7 @@ function App() {
           <Route path='/' exact element={<Home />} />
           <Route path='about' element={<About />} />
           <Route path='cart' element={<Cart />} />
+          <Route path='validate' element={<PrivateRoute><RedirectLogic /></PrivateRoute>} />
           <Route path='products' element={<Products />} />
           <Route path='products/:id' element={<SingleProduct />} />
           <Route path='checkout' element={<PrivateRoute allowedRoles={['CUSTOMER']}><Checkout /></PrivateRoute>} />

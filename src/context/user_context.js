@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useMagicContext } from '../context/magic_context'
-import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react';
+import { useMagicContext } from '../context/magic_context';
+import axios from 'axios';
 import { url_back } from '../utils/constants';
 
 const UserContext = React.createContext();
@@ -12,24 +12,12 @@ export const UserProvider = ({ children }) => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          const urls = [
-            `${url_back}profiles/customers-emails/${user.email}`,
-            `${url_back}profiles/associations-emails/${user.email}`,
-            `${url_back}profiles/farmers-emails/${user.email}`
-          ];
+          const url = `${url_back}profiles/users-emails/${user.email}`;
+          const response = await axios.get(url);
 
-          const responses = await Promise.allSettled(urls.map(url => axios.get(url)));
-
-          for (const response of responses) {
-            if (response.status === 'fulfilled' && response.value.data) {
-              const userData = response.value.data;
-              setMyUser({ ...user, role: userData.userType});
-              break;
-            }
-          }
-
-          // Si ninguna de las solicitudes se resolvió con datos válidos
-          if (!myUser) {
+          if (response.data && response.data.userType) {
+            setMyUser({ ...user, role: response.data.userType });
+          } else {
             console.error('User role not found.');
           }
         } catch (error) {
