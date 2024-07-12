@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route } from 'react-router-dom';
 import { useMagicContext } from '../context/magic_context';
 import { useUserContext } from '../context/user_context';
+import { Loading } from '../components';
 
 const PrivateRoute = ({ element: Element, ...rest }) => {
   const { isLoading, user } = useMagicContext();
@@ -21,7 +22,7 @@ const PrivateRoute = ({ element: Element, ...rest }) => {
   }, [user]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Mostrar un indicador de carga mientras se verifica el estado de autenticación
+    return <Loading />; // Mostrar un indicador de carga mientras se verifica el estado de autenticación
   }
 
   if (!isUserRegistered) {

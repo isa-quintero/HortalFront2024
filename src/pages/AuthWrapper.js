@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMagicContext } from '../context/magic_context';
+import { Loading } from '../components';
 
 const AuthWrapper = ({ children }) => {
   const { isLoading } = useMagicContext();
@@ -12,7 +13,7 @@ const AuthWrapper = ({ children }) => {
   }, [isLoading]);
 
   if (!isReady) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return children;

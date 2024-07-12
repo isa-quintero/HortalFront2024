@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useMagicContext } from '../context/magic_context';
 import { useUserContext } from '../context/user_context';
-import { url_back } from '../utils/constants';
+import { Loading } from '../components';
 
 const RedirectLogic = () => {
   const { user, getRedirectResult } = useMagicContext();
@@ -14,8 +13,6 @@ const RedirectLogic = () => {
   useEffect(() => {
     const checkUserRegistered = async () => {
       try {
-        const url = `${url_back}profiles/users-emails/${user.email}`;
-        const response = await axios.get(url);
 
         if (myUser && !myUser.role) {
           console.log('Usuario no registrado');
@@ -38,7 +35,9 @@ const RedirectLogic = () => {
   }, [user, myUser, getRedirectResult, navigate]);
 
   // Mostrar un indicador de carga mientras se está cargando
-  return loading ? <div>Cargando...</div> : null;
+  return loading ? (
+    <Loading />
+  ) : null;
 };
 
 export default RedirectLogic;

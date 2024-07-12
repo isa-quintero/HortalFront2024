@@ -6,6 +6,7 @@ import { useProductsContext } from '../context/products_context';
 import { useCartContext } from '../context/cart_context';
 import { useMagicContext } from '../context/magic_context'; 
 import { useUserContext } from '../context/user_context'
+import Loading from './Loading';
 
 const CartButton = () => {
   const { closeSidebar } = useProductsContext();
@@ -19,7 +20,7 @@ const CartButton = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Mostrar un indicador de carga mientras se verifica el estado de autenticación
+    return <Loading/> // Mostrar un indicador de carga mientras se verifica el estado de autenticación
   }
 
   // Verificar si el usuario es un cliente (CUSTOMER) o no está autenticado

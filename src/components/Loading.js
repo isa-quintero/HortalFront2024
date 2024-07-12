@@ -1,11 +1,12 @@
-import React from 'react'
+import React from 'react';
+import { FaSpinner } from 'react-icons/fa';
 
 const Loading = () => {
   return (
-    <div className='section secton-center'>
-      <div className='loading'></div>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <FaSpinner className="fa-spin spinner-animation" style={{ fontSize: '3rem' }} />
     </div>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;
