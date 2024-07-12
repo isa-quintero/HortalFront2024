@@ -22,6 +22,7 @@ export const UserProvider = ({ children }) => {
           }
         } catch (error) {
           console.error('Error fetching user role:', error);
+          setMyUser(user)
         }
       }
     };

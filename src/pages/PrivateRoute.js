@@ -1,45 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, Route } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useMagicContext } from '../context/magic_context';
 import { useUserContext } from '../context/user_context';
 import { Loading } from '../components';
 
-const PrivateRoute = ({ element: Element, ...rest }) => {
-  const { isLoading, user } = useMagicContext();
-  const { myUser } = useUserContext();
-  const [isUserRegistered, setIsUserRegistered] = useState(false);
-  const [redirectPath, setRedirectPath] = useState(null);
+const PrivateRoute = ({ children, allowedRoles }) => {
+  const { user, isLoading: magicLoading } = useMagicContext();
+  const { myUser, isLoading: userLoading } = useUserContext();
 
-  useEffect(() => {
-    const checkUserRegistered = async () => {
-      if (user) {
-        // Aquí puedes realizar la lógica adicional para verificar si el usuario está registrado
-        setIsUserRegistered(true);
-      }
-    };
-
-    checkUserRegistered();
-  }, [user]);
-
-  if (isLoading) {
-    return <Loading />; // Mostrar un indicador de carga mientras se verifica el estado de autenticación
+  if (magicLoading || userLoading) {
+    return <Loading />;
   }
 
-  if (!isUserRegistered) {
-    // Redirigir si el usuario no está registrado
-    return <Navigate to="/" />;
-  }
+  // Verificar si el usuario está autenticado y tiene un rol permitido
+  const isAuthenticated = user && myUser && allowedRoles.includes(myUser.role);
 
-  // Verificar si la ruta actual es la de validación y si el usuario está autenticado
-  if (rest.path === '/validate') {
-    if (!user) {
-      // Si el usuario no está autenticado, redirigir a la pantalla de inicio o mostrar un mensaje de error
-      return <Navigate to="/" />;
-    }
-  }
-
-  // Renderizar la ruta protegida solo si el usuario está autenticado y registrado
-  return <Route {...rest} element={<Element />} />;
+  return isAuthenticated ? children : <Navigate to="/" />;
 };
 
 export default PrivateRoute;

@@ -14,6 +14,8 @@ const RedirectLogic = () => {
     const checkUserRegistered = async () => {
       try {
 
+        console.log(myUser)
+        console.log(myUser.role)
         if (myUser && !myUser.role) {
           console.log('Usuario no registrado');
           navigate('/register');

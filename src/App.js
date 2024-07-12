@@ -26,8 +26,8 @@ function App() {
   return (
     <AuthWrapper>
       <Router>
-        <Navbar />
-        <Sidebar />
+      <Navbar />
+      <Sidebar />
         <Routes>
           <Route path='/' exact element={<Home />} />
           <Route path='about' element={<About />} />
@@ -40,7 +40,7 @@ function App() {
           <Route path='offers' element={<PrivateRoute allowedRoles={['FARMER']}><OfferTablePage /></PrivateRoute>} />
           <Route path='price-range' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><CreatePriceRangePage /></PrivateRoute>} />
           <Route path='price-ranges' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><PriceRangeTablePage /></PrivateRoute>} />
-          <Route path='register' element={<PrivateRoute><RegisterPage /></PrivateRoute>} />
+          <Route path='register' element={<RegisterPage />} />
           <Route path='login' element={<OAuthLogin />} />
           <Route path='offer' element={<CreateOfferPage />} />
           <Route path='*' element={<Error />} />
