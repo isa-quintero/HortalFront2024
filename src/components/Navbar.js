@@ -4,7 +4,7 @@ import logo from '../assets/hortalsoft.png';
 import { FaBars } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 import CartButtons from './CartButtons';
-import { useOffersContext } from '../context/products_context';
+import { useOffersContext } from '../context/offers_context';
 import { useUserContext } from '../context/user_context';
 import { links, associationLinks, customerLinks, farmerLinks } from '../utils/constants';
 

@@ -1,10 +1,10 @@
 import React from 'react'
-import { useOffersContext } from '../context/products_context'
+import { useOffersContext } from '../context/offers_context'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Error from './Error'
 import Loading from './Loading'
-import Offer from './Product'
+import Offer from './Offer'
 
 const FeaturedOffers = () => {
   const {

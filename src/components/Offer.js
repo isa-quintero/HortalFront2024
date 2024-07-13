@@ -14,12 +14,12 @@ const Offer = ({ id, productId, productName, productImage, description, amount, 
         </Link>
       </div>
       <footer>
-        <h5>{productName}</h5>
+        <h3>{productName}</h3>
         <p>{formatPrice(price)}</p>
       </footer>
       <div>
-        <p>{description}</p>
-        <p>Cantidad: {amount}</p>
+        <p>Descripción: {description}</p>
+        <p>Cantidad (en kilos): {amount}</p>
         <p>Fecha Inicial: {new Date(initialDate).toLocaleDateString()}</p>
         <p>Fecha Final: {new Date(finalDate).toLocaleDateString()}</p>
       </div>

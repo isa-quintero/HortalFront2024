@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import Offer from './Product'
+import Offer from './Offer'
 
 const GridView = ({ offers }) => {
   return (

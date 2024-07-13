@@ -12,7 +12,8 @@ import {
   FILTER_OFFERS,
   CLEAR_FILTERS,
 } from '../actions';
-import { useOffersContext } from './products_context';
+import { useOffersContext } from './offers_context';
+import defaultImage from '../assets/hortalsoft.png';
 
 const initialState = {
   filtered_offers: [],
@@ -32,6 +33,14 @@ const initialState = {
 
 const FilterContext = React.createContext();
 
+const importAll = (r) => {
+  let images = {};
+  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  return images;
+}
+
+const images = importAll(require.context('../assets/products', false, /\.(png|jpe?g|svg)$/));
+
 export const FilterProvider = ({ children }) => {
   const { offers: allOffers, products: allProducts } = useOffersContext(); // Obtener datos de productos y ofertas del contexto de ofertas
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -43,19 +52,21 @@ export const FilterProvider = ({ children }) => {
           axios.get(`${url_back}inventory/products`),
           axios.get(`${url_back}inventory/offers`),
         ]);
-  
+
         const products = productsRes.data;
         const offers = offersRes.data;
-  
+
         const offersWithProductNames = offers.map((offer) => {
           const product = products.find((p) => p.id === offer.productId);
+          const productImage = product ? images[`${product.name.toLowerCase()}.jpg`] : defaultImage;
+
           return {
             ...offer,
             productName: product ? product.name : 'Unknown Product',
-            productImage: product ? `/assets/${product.name}.jpg` : '/assets/hortalsoft.png',
+            productImage: productImage || defaultImage,
           };
         });
-  
+
         dispatch({ type: LOAD_OFFERS, payload: offersWithProductNames });
       } catch (err) {
         console.error('Error fetching offers and products:', err);
@@ -63,7 +74,6 @@ export const FilterProvider = ({ children }) => {
     };
     fetchOffersAndProducts();
   }, []);
-  
 
   useEffect(() => {
     dispatch({ type: FILTER_OFFERS });
@@ -73,16 +83,16 @@ export const FilterProvider = ({ children }) => {
   const setGridView = () => {
     dispatch({ type: SET_GRIDVIEW });
   };
-  
+
   const setListView = () => {
     dispatch({ type: SET_LISTVIEW });
   };
-  
+
   const updateSort = (e) => {
     const value = e.target.value;
     dispatch({ type: UPDATE_SORT, payload: value });
   };
-  
+
   const updateFilters = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -94,11 +104,11 @@ export const FilterProvider = ({ children }) => {
     }
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
   };
-  
+
   const clearFilters = () => {
     dispatch({ type: CLEAR_FILTERS });
   };
-  
+
   return (
     <FilterContext.Provider
       value={{
