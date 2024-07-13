@@ -33,7 +33,7 @@ function App() {
           <Route path='about' element={<About />} />
           <Route path='cart' element={<Cart />} />
           <Route path='validate' element={<RedirectLogic />} />
-          <Route path='products' element={<Products />} />
+          <Route path='offers' element={<Products />} />
           <Route path='offers/:id' element={<SingleProduct />} />
           <Route path='checkout' element={<PrivateRoute allowedRoles={['CUSTOMER']}><Checkout /></PrivateRoute>} />
           <Route path='offer' element={<PrivateRoute allowedRoles={['FARMER']}><CreateOfferPage /></PrivateRoute>} />

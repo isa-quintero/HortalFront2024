@@ -15,15 +15,14 @@ const CartButton = () => {
   const { myUser } = useUserContext();
 
   const handleLogout = async () => {
-    clearCart(); // Limpiar carrito al hacer logout
-    await logout(); // Llamar a la función logout del contexto de Magic
+    clearCart(); 
+    await logout();
   };
 
   if (isLoading) {
-    return <Loading/> // Mostrar un indicador de carga mientras se verifica el estado de autenticación
+    return <Loading/> 
   }
 
-  // Verificar si el usuario es un cliente (CUSTOMER) o no está autenticado
   const isCustomerOrGuest = !user || (myUser && myUser.role === 'CUSTOMER');
 
   return (

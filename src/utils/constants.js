@@ -14,14 +14,14 @@ export const links = [
   },
   {
     id: 3,
-    text: 'productos',
-    url: '/products',
+    text: 'ofertas',
+    url: '/offers',
   },
 ]
 export const customerLinks = [
   { id: 1, text: 'inicio', url: '/'},
   { id: 2, text: '¿Quiénes somos?', url: '/about'},
-  { id: 3, text: 'productos', url: '/products' }
+  { id: 3, text: 'ofertas', url: '/offers' }
 ];
 
 export const farmerLinks = [

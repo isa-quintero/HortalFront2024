@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 const Sort = () => {
   const {
-    filtered_offers: offers, // Cambiar a filtered_offers si usas ofertas en lugar de productos
+    filtered_offers: offers,
     grid_view,
     setGridView,
     setListView,

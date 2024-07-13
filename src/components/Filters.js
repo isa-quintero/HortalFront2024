@@ -17,7 +17,6 @@ const Filters = () => {
     clearFilters,
   } = useFilterContext()
 
-  // Verificar que all_products es un array antes de usarlo
   if (!Array.isArray(all_products)) {
     console.error('Expected all_products to be an array');
     return null;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import CultivoImage from '../assets/cultivo.jpg'; // Asegúrate de que la ruta sea correcta
+import CultivoImage from '../assets/cultivo.jpg'; 
 import { url_back } from '../utils/constants';
 import { useMagicContext } from '../context/magic_context';
 
@@ -10,14 +10,12 @@ const PriceRangeTable = () => {
   const [associationId, setAssociationId] = useState(null);
   const [priceRanges, setPriceRanges] = useState([]);
   const [productNames, setProductNames] = useState({});
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [error, setError] = useState(null); 
 
-  // Solicitud para obtener associationId
   useEffect(() => {
     const fetchAssociationId = async () => {
       try {
         const email = user.email;
-        console.log('Encoded email:', email); // Log de depuración
         const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
         setAssociationId(response.data.idUser); 
         console.log('Fetched associationId:', response.data.idUser);
@@ -33,7 +31,6 @@ const PriceRangeTable = () => {
     }
   }, [user]);
 
-  // Solicitud para obtener los nombres de los productos
   useEffect(() => {
     const fetchProductNames = async () => {
       try {
@@ -51,7 +48,6 @@ const PriceRangeTable = () => {
     fetchProductNames();
   }, []);
 
-  // Solicitud para obtener los rangos de precios usando associationId
   useEffect(() => {
     const fetchPriceRanges = async () => {
       if (!associationId) return;
@@ -63,7 +59,7 @@ const PriceRangeTable = () => {
           setError('No hay productos disponibles.');
         } else {
           setPriceRanges(response.data);
-          setError(null); // Limpiar cualquier error previo si hay ofertas
+          setError(null); 
         }
         console.log('Fetched offers:', response.data);
       } catch (error) {
@@ -144,7 +140,7 @@ const PriceRangeTable = () => {
 
 const Wrapper = styled.div`
   padding: 20px;
-  max-width: 1400px; /* Aumenta el ancho máximo del contenedor principal */
+  max-width: 1400px; 
   margin: 0 auto;
 `;
 
@@ -152,30 +148,30 @@ const ContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde para el efecto de cuadro */
-  border-radius: 10px; /* Borde redondeado */
-  overflow: hidden; /* Ocultar el contenido que se desborda */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  border: 1px solid rgba(0, 0, 0, 0.1); 
+  border-radius: 10px; 
+  overflow: hidden; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 `;
 
 const ImageColumn = styled.div`
   margin-top:5rem;
   margin-left: 1rem;
   margin-right: 1rem;
-  flex: 2; /* Aumenta la proporción del espacio que ocupan las imágenes */
+  flex: 2; 
 `;
 
 const Image = styled.img`
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 10px 0 0 10px; /* Borde redondeado solo en la esquina izquierda */
+  border-radius: 10px 0 0 10px; 
 `;
 
 const TableWrapper = styled.div`
-  flex: 3; /* Aumenta la proporción del espacio que ocupa la tabla */
+  flex: 3; 
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Fondo difuminado */
+  background-color: rgba(255, 255, 255, 0.8); 
 `;
 
 const Table = styled.table`
@@ -187,13 +183,13 @@ const Table = styled.table`
 const Th = styled.th`
   background-color: #4CAF50;
   color: white;
-  padding: 15px; /* Aumenta el padding para hacer los encabezados más grandes */
+  padding: 15px; 
   text-align: left;
 `;
 
 const Td = styled.td`
   border: 1px solid #ddd;
-  padding: 12px; /* Aumenta el padding para hacer las celdas más grandes */
+  padding: 12px; 
 `;
 
 const ErrorMessage = styled.div`

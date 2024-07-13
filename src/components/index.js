@@ -1,4 +1,3 @@
-import FeaturedProducts from './FeaturedProducts'
 import Navbar from './Navbar'
 import CartButtons from './CartButtons'
 import Footer from './Footer'
@@ -18,7 +17,6 @@ import CartContent from './CarContent'
 import PageHero from './PageHero'
 import StripeCheckout from './StripeCheckout'
 export {
-  FeaturedProducts,
   Navbar,
   CartButtons,
   Footer,

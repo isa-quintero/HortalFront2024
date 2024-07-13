@@ -18,8 +18,8 @@ import defaultImage from '../assets/hortalsoft.png';
 const initialState = {
   filtered_offers: [],
   all_offers: [],
-  products: [], // Nuevo: para almacenar productos
-  offers: [],   // Nuevo: para almacenar ofertas
+  products: [], 
+  offers: [],   
   grid_view: true,
   sort: 'price-lowest',
   filters: {
@@ -42,7 +42,7 @@ const importAll = (r) => {
 const images = importAll(require.context('../assets/products', false, /\.(png|jpe?g|svg)$/));
 
 export const FilterProvider = ({ children }) => {
-  const { offers: allOffers, products: allProducts } = useOffersContext(); // Obtener datos de productos y ofertas del contexto de ofertas
+  const { offers: allOffers, products: allProducts } = useOffersContext();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const FilterProvider = ({ children }) => {
   useEffect(() => {
     dispatch({ type: FILTER_OFFERS });
     dispatch({ type: SORT_OFFERS });
-  }, [state.sort, state.filters, allOffers]); // Usar allOffers para actualizar los filtros y ordenamiento cuando cambien las ofertas
+  }, [state.sort, state.filters, allOffers]);
 
   const setGridView = () => {
     dispatch({ type: SET_GRIDVIEW });

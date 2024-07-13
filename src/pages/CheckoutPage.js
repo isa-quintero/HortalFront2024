@@ -17,8 +17,8 @@ const CheckoutPage = () => {
         {cart.length < 1 ? (
           <div className='empty'>
             <h2>Tu carrito esta vacio</h2>
-            <Link to='/products' className='btn'>
-              Agregar productos
+            <Link to='/offers' className='btn'>
+              Agregar ofertas
             </Link>
           </div>
         ) : (
