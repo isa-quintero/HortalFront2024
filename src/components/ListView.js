@@ -2,29 +2,24 @@ import React from 'react'
 import styled from 'styled-components'
 import { formatPrice } from '../utils/helpers'
 import { Link } from 'react-router-dom'
-const ListView = ({ products }) => {
+
+const ListView = ({ offers }) => {
   return (
     <Wrapper>
-      {products.map((product) => {
-        const { id, name, description, price, offers } = product
+      {offers.map((offer) => {
+        const { id, productId, farmerId, description, amount, price, initialDate, finalDate } = offer
         return (
           <article key={id}>
-            <img src={product.image} alt={name} />
             <div>
-              <h4>{name}</h4>
+              <h4>Oferta #{id}</h4>
               <h5 className='price'>{formatPrice(price)}</h5>
               <p>{description.substring(0, 150)}...</p>
-              {offers && offers.length > 0 && (
-                <div>
-                  <h5>Ofertas:</h5>
-                  <ul>
-                    {offers.map((offer) => (
-                      <li key={offer.id}>{offer.description}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <Link to={`/products/${id}`} className='btn'>
+              <p>Cantidad: {amount}</p>
+              <p>Fecha inicial: {new Date(initialDate).toLocaleDateString()}</p>
+              <p>Fecha final: {new Date(finalDate).toLocaleDateString()}</p>
+              <p>Producto ID: {productId}</p>
+              <p>Agricultor ID: {farmerId}</p>
+              <Link to={`/offers/${id}`} className='btn'>
                 Detalles
               </Link>
             </div>
@@ -39,15 +34,6 @@ const Wrapper = styled.section`
   display: grid;
   row-gap: 3rem;
 
-  img {
-    width: 100%;
-    display: block;
-    width: 300px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    margin-bottom: 1rem;
-  }
   h4 {
     margin-bottom: 0.5rem;
   }
@@ -56,13 +42,13 @@ const Wrapper = styled.section`
     margin-bottom: 0.75rem;
   }
   p {
-    max-width: 45em;
     margin-bottom: 1rem;
   }
   .btn {
     font-size: 0.5rem;
     padding: 0.25rem 0.5rem;
   }
+
   @media (min-width: 992px) {
     article {
       display: grid;

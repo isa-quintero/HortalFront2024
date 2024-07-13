@@ -1,101 +1,104 @@
-import React, { useEffect, useContext, useReducer } from 'react'
-import axios from 'axios'
-import reducer from '../reducers/filter_reducer'
+import React, { useEffect, useContext, useReducer } from 'react';
+import axios from 'axios';
+import reducer from '../reducers/filter_reducer';
 import { url_back } from '../utils/constants';
 import {
-  LOAD_PRODUCTS,
+  LOAD_OFFERS,
   SET_GRIDVIEW,
   SET_LISTVIEW,
   UPDATE_SORT,
-  SORT_PRODUCTS,
+  SORT_OFFERS,
   UPDATE_FILTERS,
-  FILTER_PRODUCTS,
+  FILTER_OFFERS,
   CLEAR_FILTERS,
-} from '../actions'
-import { useProductsContext } from './products_context'
+} from '../actions';
+import { useOffersContext } from './products_context';
 
 const initialState = {
-  filtered_products: [],
-  all_products: [],
+  filtered_offers: [],
+  all_offers: [],
+  products: [], // Nuevo: para almacenar productos
+  offers: [],   // Nuevo: para almacenar ofertas
   grid_view: true,
   sort: 'price-lowest',
   filters: {
     text: '',
-
     category: 'all',
-    color: 'all',
     min_price: 0,
     max_price: 0,
     price: 0,
-    shipping: false,
   },
-}
+};
 
-const FilterContext = React.createContext()
+const FilterContext = React.createContext();
 
 export const FilterProvider = ({ children }) => {
-  const { products } = useProductsContext()
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const { offers: allOffers, products: allProducts } = useOffersContext(); // Obtener datos de productos y ofertas del contexto de ofertas
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
-    const fetchProductsAndOffers = async () => {
+    const fetchOffersAndProducts = async () => {
       try {
         const [productsRes, offersRes] = await Promise.all([
           axios.get(`${url_back}inventory/products`),
-          axios.get(`${url_back}inventory/offers`)
+          axios.get(`${url_back}inventory/offers`),
         ]);
-
+  
         const products = productsRes.data;
         const offers = offersRes.data;
-
-        const productsWithOffers = products.map(product => {
+  
+        const offersWithProductNames = offers.map((offer) => {
+          const product = products.find((p) => p.id === offer.productId);
           return {
-            ...product,
-            offers: offers.filter(offer => offer.productId === product.id)
-          }
-        })
-
-        dispatch({ type: LOAD_PRODUCTS, payload: productsWithOffers })
+            ...offer,
+            productName: product ? product.name : 'Unknown Product',
+            productImage: product ? `/assets/${product.name}.jpg` : '/assets/hortalsoft.png',
+          };
+        });
+  
+        dispatch({ type: LOAD_OFFERS, payload: offersWithProductNames });
       } catch (err) {
-        console.error('Error fetching products and offers:', err)
+        console.error('Error fetching offers and products:', err);
       }
-    }
-    fetchProductsAndOffers();
+    };
+    fetchOffersAndProducts();
   }, []);
+  
 
   useEffect(() => {
-    dispatch({ type: FILTER_PRODUCTS })
-    dispatch({ type: SORT_PRODUCTS })
-  }, [state.sort, state.filters, products])
+    dispatch({ type: FILTER_OFFERS });
+    dispatch({ type: SORT_OFFERS });
+  }, [state.sort, state.filters, allOffers]); // Usar allOffers para actualizar los filtros y ordenamiento cuando cambien las ofertas
+
   const setGridView = () => {
-    dispatch({ type: SET_GRIDVIEW })
-  }
+    dispatch({ type: SET_GRIDVIEW });
+  };
+  
   const setListView = () => {
-    dispatch({ type: SET_LISTVIEW })
-  }
+    dispatch({ type: SET_LISTVIEW });
+  };
+  
   const updateSort = (e) => {
-    const value = e.target.value
-    dispatch({ type: UPDATE_SORT, payload: value })
-  }
+    const value = e.target.value;
+    dispatch({ type: UPDATE_SORT, payload: value });
+  };
+  
   const updateFilters = (e) => {
-    let name = e.target.name
-    let value = e.target.value
+    let name = e.target.name;
+    let value = e.target.value;
     if (name === 'category') {
-      value = e.target.textContent
-    }
-    if (name === 'color') {
-      value = e.target.dataset.color
+      value = e.target.textContent;
     }
     if (name === 'price') {
-      value = Number(value)
+      value = Number(value);
     }
-    if (name === 'shipping') {
-      value = e.target.checked
-    }
-    dispatch({ type: UPDATE_FILTERS, payload: { name, value } })
-  }
+    dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
+  };
+  
   const clearFilters = () => {
-    dispatch({ type: CLEAR_FILTERS })
-  }
+    dispatch({ type: CLEAR_FILTERS });
+  };
+  
   return (
     <FilterContext.Provider
       value={{
@@ -109,8 +112,9 @@ export const FilterProvider = ({ children }) => {
     >
       {children}
     </FilterContext.Provider>
-  )
-}
+  );
+};
+
 export const useFilterContext = () => {
-  return useContext(FilterContext)
-}
+  return useContext(FilterContext);
+};

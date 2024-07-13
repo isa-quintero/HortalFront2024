@@ -60,8 +60,8 @@ export const services = [
   },
 ]
 
-export const products_url = 'http://localhost:8080/inventory/products'
+export const offers_url = 'http://localhost:8080/inventory/offers'
 
 export const url_back = "http://localhost:8080/"
 
-export const single_product_url = `https://course-api.com/react-store-single-product?id=`
+export const single_offer_url = `http://localhost:8080/inventory/offers`

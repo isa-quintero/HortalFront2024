@@ -1,85 +1,82 @@
-import axios from 'axios'
-import React, { useContext, useEffect, useReducer } from 'react'
-import reducer from '../reducers/products_reducer'
-import { products_url as url } from '../utils/constants'
+import axios from 'axios';
+import React, { useContext, useEffect, useReducer } from 'react';
+import reducer from '../reducers/products_reducer';
+import { offers_url as url } from '../utils/constants';
 import {
   SIDEBAR_OPEN,
   SIDEBAR_CLOSE,
-  GET_PRODUCTS_BEGIN,
-  GET_PRODUCTS_SUCCESS,
-  GET_PRODUCTS_ERROR,
-  GET_SINGLE_PRODUCT_BEGIN,
-  GET_SINGLE_PRODUCT_SUCCESS,
-  GET_SINGLE_PRODUCT_ERROR,
-} from '../actions'
+  GET_OFFERS_BEGIN,
+  GET_OFFERS_SUCCESS,
+  GET_OFFERS_ERROR,
+  GET_SINGLE_OFFER_BEGIN,
+  GET_SINGLE_OFFER_SUCCESS,
+  GET_SINGLE_OFFER_ERROR,
+} from '../actions';
 
 const initialState = {
   isSidebarOpen: false,
-  products_loading: false,
-  products_error: false,
-  products: [],
-  featured_products: [],
-  single_product_loading: false,
-  single_product_error: false,
-  single_product: {},
-}
+  offers_loading: false,
+  offers_error: false,
+  offers: [],
+  single_offer_loading: false,
+  single_offer_error: false,
+  single_offer: {},
+};
 
-const ProductsContext = React.createContext()
+const OffersContext = React.createContext();
 
-export const ProductsProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+export const OffersProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const openSidebar = () => {
-    dispatch({ type: SIDEBAR_OPEN })
-  }
+    dispatch({ type: SIDEBAR_OPEN });
+  };
   const closeSidebar = () => {
-    dispatch({ type: SIDEBAR_CLOSE })
-  }
+    dispatch({ type: SIDEBAR_CLOSE });
+  };
 
-  const fetchProducts = async (url) => {
-    dispatch({ type: GET_PRODUCTS_BEGIN })
+  const fetchOffers = async (url) => {
+    dispatch({ type: GET_OFFERS_BEGIN });
     try {
-      const response = await axios.get(url)
-      console.log('Fetch Products Response:', response)  // Log the response
-      const products = response.data
-      dispatch({ type: GET_PRODUCTS_SUCCESS, payload: products })
+      const response = await axios.get(url);
+      const offers = response.data;
+      dispatch({ type: GET_OFFERS_SUCCESS, payload: offers });
     } catch (error) {
-      console.error('Error fetching products:', error)  // Log the error
-      dispatch({ type: GET_PRODUCTS_ERROR })
+      console.error('Error fetching offers:', error);
+      dispatch({ type: GET_OFFERS_ERROR });
     }
-  }
-  
-  const fetchSingleProduct = async (url) => {
-    dispatch({ type: GET_SINGLE_PRODUCT_BEGIN })
+  };
+
+  const fetchSingleOffer = async (url) => {
+    dispatch({ type: GET_SINGLE_OFFER_BEGIN });
     try {
-      const response = await axios.get(url)
-      console.log('Fetch Single Product Response:', response)  // Log the response
-      const singleProduct = response.data
-      dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: singleProduct })
+      const response = await axios.get(url);
+      const singleOffer = response.data;
+      dispatch({ type: GET_SINGLE_OFFER_SUCCESS, payload: singleOffer });
     } catch (error) {
-      console.error('Error fetching single product:', error)  // Log the error
-      dispatch({ type: GET_SINGLE_PRODUCT_ERROR })
+      console.error('Error fetching single offer:', error);
+      dispatch({ type: GET_SINGLE_OFFER_ERROR });
     }
-  }
-  
+  };
+
   useEffect(() => {
-    fetchProducts(url)
-  }, [])
+    fetchOffers(url);
+  }, []);
 
   return (
-    <ProductsContext.Provider
+    <OffersContext.Provider
       value={{
         ...state,
         openSidebar,
         closeSidebar,
-        fetchSingleProduct,
+        fetchSingleOffer,
       }}
     >
       {children}
-    </ProductsContext.Provider>
-  )
-}
-// make sure use
-export const useProductsContext = () => {
-  return useContext(ProductsContext)
-}
+    </OffersContext.Provider>
+  );
+};
+
+export const useOffersContext = () => {
+  return useContext(OffersContext);
+};

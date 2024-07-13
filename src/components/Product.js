@@ -1,34 +1,32 @@
-import React from 'react'
-import styled from 'styled-components'
-import { formatPrice } from '../utils/helpers'
-import { FaSearch } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
-const Product = ({ id, image, name, price, offers }) => {
+import React from 'react';
+import styled from 'styled-components';
+import { formatPrice } from '../utils/helpers';
+import { FaSearch } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
+const Offer = ({ id, productId, productName, productImage, description, amount, price, initialDate, finalDate }) => {
   return (
     <Wrapper>
       <div className='container'>
-        <img src={image} alt={name} />
-        <Link to={`/products/${id}`} className='link'>
+        <img src={productImage} alt={productName} />
+        <Link to={`/offers/${id}`} className='link'>
           <FaSearch />
         </Link>
       </div>
       <footer>
-        <h5>{name}</h5>
+        <h5>{productName}</h5>
         <p>{formatPrice(price)}</p>
       </footer>
-      {offers && offers.length > 0 && (
-        <div>
-          <h5>Ofertas:</h5>
-          <ul>
-            {offers.map((offer) => (
-              <li key={offer.id}>{offer.description}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div>
+        <p>{description}</p>
+        <p>Cantidad: {amount}</p>
+        <p>Fecha Inicial: {new Date(initialDate).toLocaleDateString()}</p>
+        <p>Fecha Final: {new Date(finalDate).toLocaleDateString()}</p>
+      </div>
     </Wrapper>
-  )
-}
+  );
+};
+
 const Wrapper = styled.article`
   .container {
     position: relative;
@@ -83,5 +81,6 @@ const Wrapper = styled.article`
     color: var(--clr-primary-5);
     letter-spacing: var(--spacing);
   }
-`
-export default Product
+`;
+
+export default Offer;

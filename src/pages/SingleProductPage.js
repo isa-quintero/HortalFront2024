@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProductsContext } from '../context/products_context';
-import { single_product_url as url } from '../utils/constants';
+import { useOffersContext } from '../context/products_context';
+import { single_offer_url as url } from '../utils/constants';
 import { formatPrice } from '../utils/helpers';
 import {
   Loading,
@@ -13,20 +13,22 @@ import {
 } from '../components';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-const SingleProductPage = () => {
+
+const SingleOfferPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const {
-    single_product_loading: loading,
-    single_product_error: error,
-    single_product: product,
-    fetchSingleProduct,
-  } = useProductsContext();
+    single_offer_loading: loading,
+    single_offer_error: error,
+    single_offer: offer,
+    fetchSingleOffer,
+  } = useOffersContext();
 
   useEffect(() => {
-    fetchSingleProduct(`${url}${id}`);
+    fetchSingleOffer(`${url}${id}`);
     // eslint-disable-next-line
   }, [id]);
+
   useEffect(() => {
     if (error) {
       setTimeout(() => {
@@ -35,6 +37,7 @@ const SingleProductPage = () => {
     }
     // eslint-disable-next-line
   }, [error]);
+
   if (loading) {
     return <Loading />;
   }
@@ -43,42 +46,42 @@ const SingleProductPage = () => {
   }
 
   const {
-    name,
+    productName,
     price,
     description,
-    stock,
-    stars,
-    reviews,
-    id: sku,
+    amount,
+    initialDate,
+    finalDate,
     images,
-  } = product;
+  } = offer;
+
   return (
     <Wrapper>
-      <PageHero title={name} product />
+      <PageHero title={productName} product />
       <div className='section section-center page'>
-        <Link to='/products' className='btn'>
-          back to products
+        <Link to='/offers' className='btn'>
+          back to offers
         </Link>
-        <div className='product-center'>
+        <div className='offer-center'>
           <ProductImages images={images} />
           <section className='content'>
-            <h2>{name}</h2>
-            <Stars stars={stars} reviews={reviews} />
+            <h2>{productName}</h2>
             <h5 className='price'>{formatPrice(price)}</h5>
             <p className='desc'>{description}</p>
             <p className='info'>
               <span>Available : </span>
-              {stock > 0 ? 'In stock' : 'out of stock'}
+              {amount > 0 ? 'In stock' : 'out of stock'}
             </p>
             <p className='info'>
-              <span>SKU :</span>
-              {sku}
+              <span>Initial Date :</span>
+              {initialDate}
             </p>
             <p className='info'>
-              <span>Brand :</span>
+              <span>Final Date :</span>
+              {finalDate}
             </p>
             <hr />
-            {stock > 0 && <AddToCart product={product} />}
+            {amount > 0 && <AddToCart product={offer} />}
           </section>
         </div>
       </div>
@@ -87,7 +90,7 @@ const SingleProductPage = () => {
 };
 
 const Wrapper = styled.main`
-  .product-center {
+  .offer-center {
     display: grid;
     gap: 4rem;
     margin-top: 2rem;
@@ -110,7 +113,7 @@ const Wrapper = styled.main`
   }
 
   @media (min-width: 992px) {
-    .product-center {
+    .offer-center {
       grid-template-columns: 1fr 1fr;
       align-items: center;
     }
@@ -120,4 +123,4 @@ const Wrapper = styled.main`
   }
 `;
 
-export default SingleProductPage;
+export default SingleOfferPage;

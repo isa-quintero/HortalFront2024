@@ -7,18 +7,24 @@ const Filters = () => {
   const {
     filters: {
       text,
-      category,
+      products,
       min_price,
       price,
       max_price,
-      shipping,
     },
     updateFilters,
     all_products,
     clearFilters,
   } = useFilterContext()
 
-  const categories = getUniqueValues(all_products, 'category')
+  // Verificar que all_products es un array antes de usarlo
+  if (!Array.isArray(all_products)) {
+    console.error('Expected all_products to be an array');
+    return null;
+  }
+
+  const categories = getUniqueValues(all_products, 'products');
+  
   return (
     <Wrapper>
       <div className='content'>
@@ -35,9 +41,9 @@ const Filters = () => {
             />
           </div>
           {/* end of search input */}
-          {/* category */}
+          {/* products */}
           <div className='form-control'>
-            <h5>categoria</h5>
+            <h5>productos</h5>
             <div>
               {categories.map((c, index) => {
                 return (
@@ -45,9 +51,9 @@ const Filters = () => {
                     key={index}
                     onClick={updateFilters}
                     type='button'
-                    name='category'
+                    name='products'
                     className={`${
-                      category === c.toLowerCase() ? 'active' : null
+                      products === c.toLowerCase() ? 'active' : ''
                     }`}
                   >
                     {c}
@@ -56,7 +62,7 @@ const Filters = () => {
               })}
             </div>
           </div>
-          {/* end of category */}
+          {/* end of products */}
           {/* price */}
           <div className='form-control'>
             <h5>precio</h5>
@@ -71,18 +77,6 @@ const Filters = () => {
             />
           </div>
           {/* end of price */}
-          {/* shipping */}
-          <div className='form-control shipping'>
-            <label htmlFor='shipping'>envio gratís</label>
-            <input
-              type='checkbox'
-              name='shipping'
-              id='shipping'
-              checked={shipping}
-              onChange={updateFilters}
-            />
-          </div>
-          {/* end of  shipping */}
         </form>
         <button type='button' className='clear-btn' onClick={clearFilters}>
           eliminar filtros

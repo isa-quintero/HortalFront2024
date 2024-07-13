@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import Product from './Product'
+import Offer from './Product'
 
-const GridView = ({ products }) => {
+const GridView = ({ offers }) => {
   return (
     <Wrapper>
-      <div className='products-container'>
-        {products.map((product) => {
-          return <Product key={product.id} {...product} />
+      <div className='offers-container'>
+        {offers.map((offer) => {
+          return <Offer key={offer.id} {...offer} />
         })}
       </div>
     </Wrapper>
@@ -19,14 +19,14 @@ const Wrapper = styled.section`
     height: 175px;
   }
 
-  .products-container {
+  .offers-container {
     display: grid;
     gap: 2rem 1.5rem;
   }
 
   @media (min-width: 768px) {
-    .products-container {
-      grid-template-columns: repeat(auto-fit, minmax(223px, 1fr))
+    .offers-container {
+      grid-template-columns: repeat(auto-fit, minmax(223px, 1fr));
     }
   }
 `

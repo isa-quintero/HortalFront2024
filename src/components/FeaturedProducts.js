@@ -1,35 +1,38 @@
 import React from 'react'
-import { useProductsContext } from '../context/products_context'
+import { useOffersContext } from '../context/products_context'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Error from './Error'
 import Loading from './Loading'
-import Product from './Product'
-const FeaturedProducts = () => {
+import Offer from './Product'
+
+const FeaturedOffers = () => {
   const {
-    products_loading: loading,
-    products_error: error,
-    featured_products: featured,
-  } = useProductsContext()
+    offers_loading: loading,
+    offers_error: error,
+    featured_offers: featured,
+  } = useOffersContext()
+
   if (loading) {
     return <Loading />
   }
   if (error) {
     return <Error />
   }
+
   return (
     <Wrapper className='section'>
       <div className='title'>
-        <h2>Productos Destacados</h2>
+        <h2>Ofertas Destacadas</h2>
         <div className='underline'></div>
       </div>
       <div className='section-center featured'>
-        {featured.slice(0, 3).map((product) => {
-          return <Product key={product.id} {...product} />
+        {featured.slice(0, 3).map((offer) => {
+          return <Offer key={offer.id} {...offer} />
         })}
       </div>
-      <Link to='/products' className='btn'>
-        Todos los productos
+      <Link to='/offers' className='btn'>
+        Todas las ofertas
       </Link>
     </Wrapper>
   )
@@ -58,4 +61,4 @@ const Wrapper = styled.section`
   }
 `
 
-export default FeaturedProducts
+export default FeaturedOffers

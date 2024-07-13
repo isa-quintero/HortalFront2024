@@ -1,7 +1,7 @@
 import React from 'react'
 import logo from '../assets/hortalsoft.png'
 import { Link } from 'react-router-dom'
-import { useProductsContext } from '../context/products_context'
+import { useOffersContext } from '../context/products_context'
 import { FaTimes } from 'react-icons/fa'
 import {links,associationLinks,customerLinks,farmerLinks} from '../utils/constants'
 import styled from 'styled-components'
@@ -9,7 +9,7 @@ import CartButtons from './CartButtons'
 import { useUserContext } from '../context/user_context'
 
 const Sidebar = () => {
-  const { isSidebarOpen, closeSidebar } = useProductsContext();
+  const { isSidebarOpen, closeSidebar } = useOffersContext();
   const { myUser } = useUserContext();
 
   let sidebarLinks = [];

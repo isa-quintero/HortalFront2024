@@ -1,95 +1,82 @@
 import {
-  LOAD_PRODUCTS,
+  LOAD_OFFERS,
   SET_LISTVIEW,
   SET_GRIDVIEW,
   UPDATE_SORT,
-  SORT_PRODUCTS,
+  SORT_OFFERS,
   UPDATE_FILTERS,
-  FILTER_PRODUCTS,
+  FILTER_OFFERS,
   CLEAR_FILTERS,
-} from '../actions'
+} from '../actions';
 
 const filter_reducer = (state, action) => {
-  if (action.type === LOAD_PRODUCTS) {
-    // Extraer todos los precios, tanto del producto como de sus ofertas
-    let maxPrice = action.payload.map((p) => {
-      let offerPrices = p.offers ? p.offers.map(o => o.price) : []
-      return [p.price, ...offerPrices]
-    }).flat()
+  if (action.type === LOAD_OFFERS) {
+    if (!Array.isArray(action.payload)) {
+      throw new Error(`Expected action.payload to be an array but got ${typeof action.payload}`);
+    }
 
-    maxPrice = Math.max(...maxPrice)
+    let maxPrice = action.payload.map((offer) => offer.price);
+    maxPrice = Math.max(...maxPrice);
+
     return {
       ...state,
-      all_products: [...action.payload],
-      filtered_products: [...action.payload],
+      all_offers: [...action.payload],
+      filtered_offers: [...action.payload],
       filters: { ...state.filters, max_price: maxPrice, price: maxPrice },
-    }
+    };
   }
   if (action.type === SET_GRIDVIEW) {
-    return { ...state, grid_view: true }
+    return { ...state, grid_view: true };
   }
   if (action.type === SET_LISTVIEW) {
-    return { ...state, grid_view: false }
+    return { ...state, grid_view: false };
   }
   if (action.type === UPDATE_SORT) {
-    return { ...state, sort: action.payload }
+    return { ...state, sort: action.payload };
   }
-  if (action.type === SORT_PRODUCTS) {
-    const { sort, filtered_products } = state
-    let tempProducts = [...filtered_products]
+  if (action.type === SORT_OFFERS) {
+    const { sort, filtered_offers } = state;
+    let tempOffers = [...filtered_offers];
     if (sort === 'price-lowest') {
-      tempProducts = tempProducts.sort((a, b) => {
-        return (a.price || 0) - (b.price || 0)
-      })
+      tempOffers = tempOffers.sort((a, b) => a.price - b.price);
     }
     if (sort === 'price-highest') {
-      tempProducts = tempProducts.sort((a, b) => {
-        return (b.price || 0) - (a.price || 0)
-      })
+      tempOffers = tempOffers.sort((a, b) => b.price - a.price);
     }
     if (sort === 'name-a') {
-      tempProducts = tempProducts.sort((a, b) => {
-        return a.name.localeCompare(b.name)
-      })
+      tempOffers = tempOffers.sort((a, b) => a.productName.localeCompare(b.productName));
     }
     if (sort === 'name-z') {
-      tempProducts = tempProducts.sort((a, b) => {
-        return b.name.localeCompare(a.name)
-      })
+      tempOffers = tempOffers.sort((a, b) => b.productName.localeCompare(a.productName));
     }
 
-    return { ...state, filtered_products: tempProducts }
+    return { ...state, filtered_offers: tempOffers };
   }
   if (action.type === UPDATE_FILTERS) {
-    const { name, value } = action.payload
-    return { ...state, filters: { ...state.filters, [name]: value } }
+    const { name, value } = action.payload;
+    return { ...state, filters: { ...state.filters, [name]: value } };
   }
-  if (action.type === FILTER_PRODUCTS) {
-    const { all_products } = state
-    const { text, category, price, shipping } = state.filters
-    let tempProducts = [...all_products]
+  if (action.type === FILTER_OFFERS) {
+    const { all_offers } = state;
+    const { text, category, price, shipping } = state.filters;
+    let tempOffers = [...all_offers];
     if (text) {
-      tempProducts = tempProducts.filter((product) =>
-        product.name.toLowerCase().startsWith(text)
-      )
+      tempOffers = tempOffers.filter((offer) =>
+        offer.productName.toLowerCase().startsWith(text.toLowerCase())
+      );
     }
     if (category !== 'all') {
-      tempProducts = tempProducts.filter(
-        (product) => product.category === category
-      )
+      tempOffers = tempOffers.filter((offer) => offer.category === category);
     }
 
     // filter by price
-    tempProducts = tempProducts.filter((product) => {
-      let offerPrices = product.offers ? product.offers.map(o => o.price) : []
-      let allPrices = [product.price, ...offerPrices]
-      return allPrices.some(p => p <= price)
-    })
+    tempOffers = tempOffers.filter((offer) => offer.price <= price);
+
     // filter by shipping
     if (shipping) {
-      tempProducts = tempProducts.filter((product) => product.shipping === true)
+      tempOffers = tempOffers.filter((offer) => offer.shipping === true);
     }
-    return { ...state, filtered_products: tempProducts }
+    return { ...state, filtered_offers: tempOffers };
   }
   if (action.type === CLEAR_FILTERS) {
     return {
@@ -98,13 +85,12 @@ const filter_reducer = (state, action) => {
         ...state.filters,
         text: '',
         category: 'all',
-        color: 'all',
         price: state.filters.max_price,
         shipping: false,
       },
-    }
+    };
   }
-  throw new Error(`No Matching "${action.type}" - action type`)
-}
+  throw new Error(`No Matching "${action.type}" - action type`);
+};
 
-export default filter_reducer
+export default filter_reducer;

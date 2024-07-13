@@ -1,15 +1,22 @@
 export const formatPrice = (number) => {
-  return new Intl.NumberFormat('en-US', {
+  if (typeof number !== 'number') {
+    console.error('formatPrice expects a number');
+    return '';
+  }
+
+  return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'USD',
-  }).format(number / 100)
+    currency: 'COP',
+  }).format(number);
 }
 
 export const getUniqueValues = (data, type) => {
-  let unique = data.map((item) => item[type])
-  if (type === 'colors') {
-    unique = unique.flat()
+  if (!Array.isArray(data)) {
+    console.error('getUniqueValues expects an array of objects');
+    return [];
   }
 
-  return ['todos', ...new Set(unique)]
+  let unique = data.map((item) => item[type]);
+
+  return ['todos', ...new Set(unique)];
 }

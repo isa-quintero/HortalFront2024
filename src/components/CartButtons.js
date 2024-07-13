@@ -2,14 +2,14 @@ import React from 'react';
 import { FaShoppingCart, FaUserMinus, FaUserPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProductsContext } from '../context/products_context';
+import { useOffersContext } from '../context/products_context';
 import { useCartContext } from '../context/cart_context';
 import { useMagicContext } from '../context/magic_context'; 
 import { useUserContext } from '../context/user_context'
 import Loading from './Loading';
 
 const CartButton = () => {
-  const { closeSidebar } = useProductsContext();
+  const { closeSidebar } = useOffersContext();
   const { total_items, clearCart } = useCartContext();
   const { user, logout, isLoading } = useMagicContext();   
   const { myUser } = useUserContext();
