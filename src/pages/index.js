@@ -1,6 +1,6 @@
 import Home from './HomePage'
-import Products from './OfferPage'
-import SingleProduct from './SingleOfferPage'
+import Offers from './OfferPage'
+import SingleOffer from './SingleOfferPage'
 import About from './AboutPage'
 import Cart from './CartPage'
 import Error from './ErrorPage'
@@ -10,12 +10,12 @@ import AuthWrapper from './AuthWrapper'
 import OAuthLogin from './OAuthLogin'
 export {
   Home,
-  SingleProduct,
+  SingleOffer,
   Cart,
   About,
   Error,
   Checkout,
-  Products,
+  Offers,
   PrivateRoute,
   AuthWrapper,
   OAuthLogin

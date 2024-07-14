@@ -40,7 +40,7 @@ const AddToCart = ({ product }) => {
           className='btn'
           onClick={() => addToCart(id, amount, product)}
         >
-          add to cart
+          agregar al carrito
         </Link>
       </div>
     </Wrapper>

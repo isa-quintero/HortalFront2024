@@ -60,7 +60,7 @@ const SingleOfferPage = () => {
       <PageHero title={productName} product />
       <div className='section section-center page'>
         <Link to='/offers' className='btn'>
-          back to offers
+          volver a ofertas
         </Link>
         <div className='offer-center'>
           <ProductImages images={productImage} />
