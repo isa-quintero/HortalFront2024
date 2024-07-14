@@ -8,7 +8,14 @@ import {
 
 const cart_reducer = (state, action) => {
   if (action.type === ADD_TO_CART) {
-    const { id, amount, offer } = action.payload
+    const { id, amount, offer, productName, imagen } = action.payload
+
+    // Verifica si offer está definido
+    if (!offer || !id || amount === undefined || !productName || !imagen) {
+      console.error('Invalid payload:', action.payload)
+      return state
+    }
+
     const tempItem = state.cart.find((i) => i.id === id)
     if (tempItem) {
       const tempCart = state.cart.map((cartItem) => {
@@ -28,14 +35,18 @@ const cart_reducer = (state, action) => {
         price: offer.price,
         initialDate: offer.initialDate,
         finalDate: offer.finalDate,
+        productName,
+        imagen,
       }
       return { ...state, cart: [...state.cart, newItem] }
     }
   }
+
   if (action.type === REMOVE_CART_ITEM) {
     const tempCart = state.cart.filter((item) => item.id !== action.payload)
     return { ...state, cart: tempCart }
   }
+
   if (action.type === TOGGLE_CART_ITEM_AMOUNT) {
     const { id, value } = action.payload
     const tempCart = state.cart.map((item) => {
@@ -56,9 +67,11 @@ const cart_reducer = (state, action) => {
     })
     return { ...state, cart: tempCart }
   }
+
   if (action.type === CLEAR_CART) {
     return { ...state, cart: [] }
   }
+
   if (action.type === COUNT_CART_TOTALS) {
     const { total_items, total_amount } = state.cart.reduce(
       (total, cartItem) => {
@@ -71,6 +84,7 @@ const cart_reducer = (state, action) => {
     )
     return { ...state, total_items, total_amount }
   }
+
   throw new Error(`No Matching "${action.type}" - action type`)
 }
 
