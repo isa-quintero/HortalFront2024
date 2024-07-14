@@ -1,7 +1,10 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
 import reducer from '../reducers/offers_reducer';
-import { offers_url as url } from '../utils/constants';
+import { single_farmer_url, single_product_url, offers_url as url } from '../utils/constants';
+import { url_back } from '../utils/constants';
+import { images } from '../utils/constants';
+import defaultImage from '../assets/hortalsoft.png';
 import {
   SIDEBAR_OPEN,
   SIDEBAR_CLOSE,
@@ -52,7 +55,37 @@ export const OffersProvider = ({ children }) => {
     try {
       const response = await axios.get(url);
       const singleOffer = response.data;
-      dispatch({ type: GET_SINGLE_OFFER_SUCCESS, payload: singleOffer });
+      console.log(singleOffer)
+  
+      const productResponse = await axios.get(`${single_product_url}${singleOffer.productId}`);
+      const product = productResponse.data;
+
+      const farmerResponse = await axios.get(`${single_farmer_url}${singleOffer.farmer}`);
+      const farmer = farmerResponse.data;
+  
+      let productName = 'Producto desconocido';
+      let productImage = defaultImage;
+      let farmerUsername = 'Agricultor desconocido'
+  
+      if (product) {
+        productName = product.name || productName;
+        const imageName = `${product.name.toLowerCase()}.jpg`;
+        productImage = images[imageName] || defaultImage;
+      }
+
+      if (farmer) {
+        farmerUsername = farmer.city || farmerUsername;
+      }
+  
+      // Agregas el nombre del producto y la imagen al objeto singleOffer
+      const offerWithDetails = {
+        ...singleOffer,
+        productName: productName,
+        productImage: productImage,
+        farmer: farmerUsername
+      };
+  
+      dispatch({ type: GET_SINGLE_OFFER_SUCCESS, payload: offerWithDetails });
     } catch (error) {
       console.error('Error fetching single offer:', error);
       dispatch({ type: GET_SINGLE_OFFER_ERROR });

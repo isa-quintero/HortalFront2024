@@ -14,6 +14,7 @@ import {
 } from '../actions';
 import { useOffersContext } from './offers_context';
 import defaultImage from '../assets/hortalsoft.png';
+import { images } from '../utils/constants';
 
 const initialState = {
   filtered_offers: [],
@@ -33,13 +34,6 @@ const initialState = {
 
 const FilterContext = React.createContext();
 
-const importAll = (r) => {
-  let images = {};
-  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-  return images;
-}
-
-const images = importAll(require.context('../assets/products', false, /\.(png|jpe?g|svg)$/));
 
 export const FilterProvider = ({ children }) => {
   const { offers: allOffers, products: allProducts } = useOffersContext();

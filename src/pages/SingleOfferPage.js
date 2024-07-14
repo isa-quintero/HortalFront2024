@@ -6,14 +6,13 @@ import { formatPrice } from '../utils/helpers';
 import {
   Loading,
   Error,
-  ProductImages,
   AddToCart,
   Stars,
   PageHero,
 } from '../components';
+import OfferImages from '../components/OfferImages'; // Asegúrate de importar correctamente OfferImages
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
 const SingleOfferPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -52,7 +51,9 @@ const SingleOfferPage = () => {
     amount,
     initialDate,
     finalDate,
-    productImage,
+    productImage, 
+    offerImages,
+    farmerUsername 
   } = offer;
 
   return (
@@ -60,10 +61,10 @@ const SingleOfferPage = () => {
       <PageHero title={productName} product />
       <div className='section section-center page'>
         <Link to='/offers' className='btn'>
-          volver a ofertas
+          Volver a ofertas
         </Link>
         <div className='offer-center'>
-          <ProductImages images={productImage} />
+          <OfferImages productImage={productImage} images={offerImages} />
           <section className='content'>
             <h2>{productName}</h2>
             <h5 className='price'>{formatPrice(price)}</h5>
@@ -79,6 +80,10 @@ const SingleOfferPage = () => {
             <p className='info'>
               <span>Fecha final:</span>
               {new Date(finalDate).toLocaleDateString()}
+            </p>
+            <p className='info'>
+              <span>Vendido por:</span>
+              {farmerUsername}
             </p>
             <hr />
             {amount > 0 && <AddToCart product={offer} />}

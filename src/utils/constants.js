@@ -65,3 +65,18 @@ export const offers_url = 'http://localhost:8080/inventory/offers'
 export const url_back = "http://localhost:8080/"
 
 export const single_offer_url = `http://localhost:8080/inventory/offers/`
+
+export const single_product_url = `http://localhost:8080/inventory/products/`
+
+export const single_farmer_url = `http://localhost:8080/profiles/farmers/`
+
+
+const importAll = (r) => {
+  let images = {};
+  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  return images;
+}
+
+const images = importAll(require.context('../assets/products', false, /\.(png|jpe?g|svg)$/));
+
+export { images };
