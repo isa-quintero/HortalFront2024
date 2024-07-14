@@ -50,7 +50,7 @@ const Nav = () => {
             })}
             {myUser && myUser.role === 'CUSTOMER' && (
               <li>
-                <Link to='/checkout'>checkout</Link>
+                <Link to='/checkout'>facturación</Link>
               </li>
             )}
           </ul>

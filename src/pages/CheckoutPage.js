@@ -12,7 +12,7 @@ const CheckoutPage = () => {
 
   return (
     <main>
-      <PageHero title='checkout' />
+      <PageHero title='facturación' />
       <Wrapper className='page'>
         {cart.length < 1 ? (
           <div className='empty'>

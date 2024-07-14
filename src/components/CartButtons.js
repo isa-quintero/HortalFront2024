@@ -29,7 +29,6 @@ const CartButton = () => {
     <Wrapper className='cart-btn-wrapper'>
       {isCustomerOrGuest && (
         <Link to='/cart' className='cart-btn' onClick={closeSidebar}>
-          Cart
           <span className='cart-container'>
             <FaShoppingCart />
             <span className='cart-value'>{total_items}</span>
@@ -38,11 +37,11 @@ const CartButton = () => {
       )}
       {user ? (
         <button type='button' className='auth-btn' onClick={handleLogout}>
-          Logout <FaUserMinus />
+          Cerrar Sesión <FaUserMinus />
         </button>
       ) : (
         <Link to='/login' className='auth-btn'>
-          Login <FaUserPlus />
+          Iniciar Sesión <FaUserPlus />
         </Link>
       )}
     </Wrapper>
@@ -91,7 +90,7 @@ const Wrapper = styled.div`
     align-items: center;
     background: transparent;
     border-color: transparent;
-    font-size: 1.5rem;
+    font-size: 1rem;
     cursor: pointer;
     color: var(--clr-grey-1);
     letter-spacing: var(--spacing);
