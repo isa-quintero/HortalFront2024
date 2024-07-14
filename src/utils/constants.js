@@ -64,4 +64,4 @@ export const offers_url = 'http://localhost:8080/inventory/offers'
 
 export const url_back = "http://localhost:8080/"
 
-export const single_offer_url = `http://localhost:8080/inventory/offers`
+export const single_offer_url = `http://localhost:8080/inventory/offers/`

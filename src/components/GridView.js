@@ -22,11 +22,18 @@ const Wrapper = styled.section`
   .offers-container {
     display: grid;
     gap: 2rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(223px, 1fr));
   }
 
   @media (min-width: 768px) {
     .offers-container {
-      grid-template-columns: repeat(auto-fit, minmax(223px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .offers-container {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
   }
 `

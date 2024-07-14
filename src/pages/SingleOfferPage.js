@@ -52,7 +52,7 @@ const SingleOfferPage = () => {
     amount,
     initialDate,
     finalDate,
-    images,
+    productImage,
   } = offer;
 
   return (
@@ -63,22 +63,22 @@ const SingleOfferPage = () => {
           back to offers
         </Link>
         <div className='offer-center'>
-          <ProductImages images={images} />
+          <ProductImages images={productImage} />
           <section className='content'>
             <h2>{productName}</h2>
             <h5 className='price'>{formatPrice(price)}</h5>
             <p className='desc'>{description}</p>
             <p className='info'>
-              <span>Available : </span>
-              {amount > 0 ? 'In stock' : 'out of stock'}
+              <span>Disponibilidad : </span>
+              {amount > 0 ? 'DISPONIBLE' : 'AGOTADO'}
             </p>
             <p className='info'>
-              <span>Initial Date :</span>
-              {initialDate}
+              <span>Fecha inicial :</span>
+              {new Date(initialDate).toLocaleDateString()}
             </p>
             <p className='info'>
-              <span>Final Date :</span>
-              {finalDate}
+              <span>Fecha final:</span>
+              {new Date(finalDate).toLocaleDateString()}
             </p>
             <hr />
             {amount > 0 && <AddToCart product={offer} />}
