@@ -123,7 +123,7 @@ const PriceRangeTable = () => {
                     <Td>${priceRange.initialRange}</Td>
                     <Td>${priceRange.finalRange}</Td>
                     <Td>{new Date(priceRange.initialDate).toLocaleDateString()}</Td>
-                    <Td>{new Date(priceRange.initialDate).toLocaleDateString()}</Td>
+                    <Td>{new Date(priceRange.finalDate).toLocaleDateString()}</Td>
                   </tr>
                 ))
               )}
