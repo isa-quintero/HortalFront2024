@@ -71,7 +71,7 @@ const GrayBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: hsl(111, 47%, 79%); /* Gris claro */
+  background-color: hsl(111, 47%, 79%); 
   z-index: -1;
 `;
 

@@ -255,7 +255,7 @@ const BackgroundImage = styled.div`
   background-size: cover;
   position: relative;
   width: 100%;
-  height: 100vh; /* Ajustar el tamaño de la imagen de fondo */
+  height: 100vh; 
 `;
 
 const OverlayText = styled.div`
@@ -276,9 +276,9 @@ const FormWrapper = styled.div`
   padding: 30px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 50%; /* Ancho del formulario */
-  max-width: 600px; /* Ancho máximo del formulario */
-  margin-right: 50px; /* Separación del borde derecho */
+  width: 50%; 
+  max-width: 600px; 
+  margin-right: 50px; 
 `;
 
 const Title = styled.h1`
@@ -337,7 +337,7 @@ const Button = styled.button`
   cursor: pointer;
   font-size: 16px;
   margin-top: 20px;
-  opacity: ${props => props.disabled ? '0.5' : '1'}; /* Cambia la opacidad si está deshabilitado */
+  opacity: ${props => props.disabled ? '0.5' : '1'}; 
 `;
 
 const Modal = styled.div`

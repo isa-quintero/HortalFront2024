@@ -33,7 +33,7 @@ const Wrapper = styled.section`
 
   @media (min-width: 1024px) {
     .offers-container {
-      grid-template-columns: repeat(4, 3fr); /* 4 columnas en pantallas grandes */
+      grid-template-columns: repeat(4, 3fr);  
     }
   }
 `

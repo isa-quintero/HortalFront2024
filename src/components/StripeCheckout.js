@@ -112,13 +112,11 @@ const CheckoutForm = () => {
             {processing ? <div className='spinner' id='spinner'></div> : 'Pagar'}
           </span>
         </button>
-        {/* Show any error that happens when processing the payment */}
         {error && (
           <div className='card-error' role='alert'>
             {error}
           </div>
         )}
-        {/* Show a success message upon completion */}
         <p className={succeeded ? 'result-message' : 'result-message hidden'}>
           Pago efectuado, vea el resultado en su
           <a href={`https://dashboard.stripe.com/test/payments`}>
@@ -194,7 +192,6 @@ const Wrapper = styled.section`
   #payment-request-button {
     margin-bottom: 32px;
   }
-  /* Buttons and links */
   button {
     background: #5469d4;
     font-family: Arial, sans-serif;
@@ -217,7 +214,6 @@ const Wrapper = styled.section`
     opacity: 0.5;
     cursor: default;
   }
-  /* spinner/processing state, errors */
   .spinner,
   .spinner:before,
   .spinner:after {

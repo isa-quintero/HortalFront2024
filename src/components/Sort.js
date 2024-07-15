@@ -29,7 +29,7 @@ const Sort = () => {
           <BsList />
         </button>
       </div>
-      <p>{offers.length} ofertas encontradas</p> {/* Actualizado a ofertas */}
+      <p>{offers.length} ofertas encontradas</p>
       <hr />
       <form>
         <label htmlFor='sort'>organizar por</label>

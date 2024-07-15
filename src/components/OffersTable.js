@@ -135,7 +135,7 @@ const OffersTable = () => {
 
 const Wrapper = styled.div`
   padding: 20px;
-  max-width: 1600px; /* Aumenta el ancho máximo del contenedor principal */
+  max-width: 1600px;
   margin: 0 auto;
 `;
 
@@ -143,30 +143,30 @@ const ContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border: 2px solid rgba(0, 0, 0, 0.1); /* Borde para el efecto de cuadro */
-  border-radius: 15px; /* Borde redondeado */
-  overflow: hidden; /* Ocultar el contenido que se desborda */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra suave */
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  overflow: hidden; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 `;
 
 const ImageColumn = styled.div`
   margin-top: 5rem;
   margin-left: 1rem;
   margin-right: 1rem;
-  flex: 1; /* Aumenta la proporción del espacio que ocupan las imágenes */
+  flex: 1;
 `;
 
 const Image = styled.img`
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 15px; /* Borde redondeado */
+  border-radius: 15px;
 `;
 
 const TableWrapper = styled.div`
-  flex: 2; /* Aumenta la proporción del espacio que ocupa la tabla */
+  flex: 2; 
   padding: 30px;
-  background-color: rgba(255, 255, 255, 0.9); /* Fondo difuminado */
+  background-color: rgba(255, 255, 255, 0.9); 
 `;
 
 const Table = styled.table`
@@ -178,13 +178,13 @@ const Table = styled.table`
 const Th = styled.th`
   background-color: #4CAF50;
   color: white;
-  padding: 20px; /* Aumenta el padding para hacer los encabezados más grandes */
+  padding: 20px; 
   text-align: left;
 `;
 
 const Td = styled.td`
   border: 1px solid #ddd;
-  padding: 16px; /* Aumenta el padding para hacer las celdas más grandes */
+  padding: 16px; 
 `;
 
 const ErrorMessage = styled.div`
