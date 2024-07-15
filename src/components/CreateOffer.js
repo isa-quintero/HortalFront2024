@@ -4,6 +4,7 @@ import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png';
 import { offers_url, single_product_url, url_back } from '../utils/constants';
 import { useMagicContext } from '../context/magic_context';
+import { mintNFT } from '../utils/mintNFT'
 
 const CreateOffer = () => {
   const { user } = useMagicContext();
@@ -82,10 +83,10 @@ const CreateOffer = () => {
     }
 
     try {
-      // Ajustar las fechas a UTC para evitar problemas de zona horaria
       const initialDateUTC = new Date(initialDate).toISOString();
       const finalDateUTC = new Date(finalDate).toISOString();
-
+      //Para la creación del NFT en la blockchain se usa esta función con la información correspondiente a la oferta 
+      //const requestId = await mintNFT('contractId', parseInt(amount), public.address, productId, farmer, price);
       const offerData = {
         productId: parseInt(productId),
         farmer: farmer,
@@ -96,6 +97,8 @@ const CreateOffer = () => {
         finalDate: finalDateUTC,
         validity: true,
         idBlockchain: 0,
+        //Respuesta de la red de la blockchain para la creación del NFT que representa la oferta
+        //idBlockchain: requestId,
       };
 
       const response = await axios.post(`${offers_url}`, offerData);
