@@ -5,23 +5,23 @@ import { useCartContext } from '../context/cart_context'
 import AmountButtons from './AmountButtons'
 const AddToCart = ({ product }) => {
   const { addToCart } = useCartContext()
-  const { id, stock } = product
-  const [amount, setAmount] = useState(1)
+  const { id, amount } = product
+  const [amountCart, setAmountCart] = useState(1)
   const productName = product.productName;
   console.log(product)
   const imagen = product.productImage; 
 
   const increase = () => {
-    setAmount((oldAmount) => {
+    setAmountCart((oldAmount) => {
       let tempAmount = oldAmount + 1
-      if (tempAmount > stock) {
-        tempAmount = stock
+      if (tempAmount > amount) {
+        tempAmount = amount
       }
       return tempAmount
     })
   }
   const decrease = () => {
-    setAmount((oldAmount) => {
+    setAmountCart((oldAmount) => {
       let tempAmount = oldAmount - 1
       if (tempAmount < 1) {
         tempAmount = 1
@@ -35,13 +35,13 @@ const AddToCart = ({ product }) => {
         <AmountButtons
           increase={increase}
           decrease={decrease}
-          amount={amount}
+          amount={amountCart}
         />
 
         <Link
           to='/cart'
           className='btn'
-          onClick={() => addToCart(id, amount, product,productName, imagen)}
+          onClick={() => addToCart(id, amountCart, product,productName, imagen)}
         >
           agregar al carrito
         </Link>
