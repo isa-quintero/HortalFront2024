@@ -37,7 +37,7 @@ function App() {
           <Route path='offers/:id' element={<SingleOfferPage />} />
           <Route path='checkout' element={<PrivateRoute allowedRoles={['CUSTOMER']}><Checkout /></PrivateRoute>} />
           <Route path='offer' element={<PrivateRoute allowedRoles={['FARMER']}><CreateOfferPage /></PrivateRoute>} />
-          <Route path='offers' element={<PrivateRoute allowedRoles={['FARMER']}><OfferTablePage /></PrivateRoute>} />
+          <Route path='offers-farmer' element={<PrivateRoute allowedRoles={['FARMER']}><OfferTablePage /></PrivateRoute>} />
           <Route path='price-range' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><CreatePriceRangePage /></PrivateRoute>} />
           <Route path='price-ranges' element={<PrivateRoute allowedRoles={['ASSOCIATION']}><PriceRangeTablePage /></PrivateRoute>} />
           <Route path='register' element={<RegisterPage />} />

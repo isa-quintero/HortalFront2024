@@ -57,7 +57,7 @@ export const OffersProvider = ({ children }) => {
       const singleOffer = response.data;
       console.log(singleOffer)
   
-      const productResponse = await axios.get(`${single_product_url}${singleOffer.productId}`);
+      const productResponse = await axios.get(`${single_product_url}/${singleOffer.productId}`);
       const product = productResponse.data;
 
       const farmerResponse = await axios.get(`${single_farmer_url}${singleOffer.farmer}`);

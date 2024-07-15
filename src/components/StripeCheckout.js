@@ -98,7 +98,7 @@ const CheckoutForm = () => {
         <article>
           <h4>Hola, {myUser && myUser.name}</h4>
           <p>Tu total es de: {formatPrice(total_amount)}</p>
-          <p>Numero de tarjeta de prueba: 4242 4242 4242 4242</p>
+          <p>Cuenta blockchain prueba: 0xbe7055b303043276760D0E3xxxxxxxxxxx</p>
         </article>
       )}
       <form id='payment-form' onSubmit={handleSubmit}>

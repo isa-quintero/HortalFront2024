@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png';
-import { single_offer_url, single_product_url, url_back } from '../utils/constants';
-import { mintNFT } from '../utils/mintNFT';
+import { offers_url, single_product_url, url_back } from '../utils/constants';
 import { useMagicContext } from '../context/magic_context';
 
 const CreateOffer = () => {
@@ -34,7 +33,7 @@ const CreateOffer = () => {
     const fetchFarmerId = async () => {
       try {
         const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
-        setFarmer(response.data.idUser); 
+        setFarmer(response.data.idUser);
         console.log('Fetched farmer:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching farmer:', error);
@@ -46,15 +45,25 @@ const CreateOffer = () => {
     } else {
       console.error('No user or user.email available');
     }
-  
+  }, [user]);
+
+  useEffect(() => {
     const validateForm = () => {
       if (productId && description && amount && price && initialDate && finalDate) {
-        if (new Date(initialDate) <= new Date(finalDate)) {
-          setFormIncomplete(false);
-          setError(null);
-        } else {
+        const currentDate = new Date();
+        const initialDateObj = new Date(initialDate);
+        const finalDateObj = new Date(finalDate);
+
+        if (initialDateObj < currentDate) {
+          console.log(initialDateObj, "<", currentDate)
+          setFormIncomplete(true);
+          setError('La fecha inicial no puede ser menor que la fecha actual.');
+        } else if (initialDateObj > finalDateObj) {
           setFormIncomplete(true);
           setError('La fecha inicial no puede ser mayor que la fecha límite.');
+        } else {
+          setFormIncomplete(false);
+          setError(null);
         }
       } else {
         setFormIncomplete(true);
@@ -62,7 +71,7 @@ const CreateOffer = () => {
     };
 
     validateForm();
-  }, [productId, description, amount, price, initialDate, finalDate,user]);
+  }, [productId, description, amount, price, initialDate, finalDate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,26 +82,34 @@ const CreateOffer = () => {
     }
 
     try {
-      
+      // Ajustar las fechas a UTC para evitar problemas de zona horaria
+      const initialDateUTC = new Date(initialDate).toISOString();
+      const finalDateUTC = new Date(finalDate).toISOString();
+
       const offerData = {
         productId: parseInt(productId),
         farmer: farmer,
         description,
         amount: parseInt(amount),
         price: parseFloat(price),
-        initialDate: new Date(initialDate),
-        finalDate: new Date(finalDate),
+        initialDate: initialDateUTC,
+        finalDate: finalDateUTC,
         validity: true,
         idBlockchain: 0,
       };
 
-      const response = await axios.post(`${single_offer_url}`, offerData);
+      const response = await axios.post(`${offers_url}`, offerData);
       console.log('Oferta creada exitosamente:', response.data);
       setShowModal(true);
 
     } catch (error) {
       console.error('Error al crear la oferta:', error);
-      setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');
+
+      if (error.response && error.response.status === 403) {
+        setError(error.response.data);
+      } else {
+        setError('Error al crear la oferta. Por favor, inténtalo de nuevo.');
+      }
     }
   };
 
@@ -114,7 +131,7 @@ const CreateOffer = () => {
               <Required>*</Required>
             </Label>
             <Select value={productId} onChange={(e) => setProductId(e.target.value)}>
-              <option value=""disabled hidden>Seleccione un producto</option>
+              <option value="" disabled hidden>Seleccione un producto</option>
               {products.map((prod) => (
                 <option key={prod.id} value={prod.id}>{prod.name.toUpperCase()}</option>
               ))}

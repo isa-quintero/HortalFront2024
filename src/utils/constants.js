@@ -27,7 +27,7 @@ export const customerLinks = [
 export const farmerLinks = [
   { id: 1, text: 'inicio', url: '/'},
   { id: 2, text: 'crear oferta', url: '/offer' },
-  { id: 3, text: 'mis ofertas', url: '/offers' },
+  { id: 3, text: 'mis ofertas', url: '/offers-farmer' },
 ];
 
 export const associationLinks = [
@@ -66,7 +66,7 @@ export const url_back = "http://localhost:8080/"
 
 export const single_offer_url = `http://localhost:8080/inventory/offers/`
 
-export const single_product_url = `http://localhost:8080/inventory/products/`
+export const single_product_url = `http://localhost:8080/inventory/products`
 
 export const single_farmer_url = `http://localhost:8080/profiles/farmers/`
 
