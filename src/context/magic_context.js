@@ -1,6 +1,5 @@
-// magic_context.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import magic from '../magic'; // Import Magic instance
+import magic from '../magic';
 
 const MagicContext = createContext();
 
@@ -28,7 +27,7 @@ export const MagicProvider = ({ children }) => {
   }, []);
 
   const login = async (provider) => {
-    console.log('Login called with provider:', provider); // Debugging
+    console.log('Login called with provider:', provider);
     try {
       await magic.oauth.loginWithRedirect({
         provider,
@@ -52,7 +51,7 @@ export const MagicProvider = ({ children }) => {
   const logout = async () => {
     await magic.user.logout();
     setUser(null);
-    window.location.href = '/'; // Redirect to home on logout
+    window.location.href = '/';
   };
 
   return (

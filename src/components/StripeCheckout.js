@@ -62,8 +62,6 @@ const CheckoutForm = () => {
     },
   };
   const handleChange = async (event) => {
-    // Listen for changes in the CardElement
-    // and display any errors as the customer types their card details
     setDisabled(event.empty);
     setError(event.error ? event.error.message : '');
   };

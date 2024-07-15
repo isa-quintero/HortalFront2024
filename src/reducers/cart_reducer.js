@@ -10,7 +10,6 @@ const cart_reducer = (state, action) => {
   if (action.type === ADD_TO_CART) {
     const { id, amount, offer, productName, imagen } = action.payload
 
-    // Verifica si offer está definido
     if (!offer || !id || amount === undefined || !productName || !imagen) {
       console.error('Invalid payload:', action.payload)
       return state

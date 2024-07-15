@@ -39,7 +39,7 @@ const Sidebar = () => {
             <FaTimes />
           </button>
         </div>
-        {!isRegisterPage && ( // Mostrar los enlaces solo si no estamos en la página de registro
+        {!isRegisterPage && (
           <ul className='links'>
             {sidebarLinks.map(({ id, text, url }) => (
               <li key={id}>

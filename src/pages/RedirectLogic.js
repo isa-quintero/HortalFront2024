@@ -36,7 +36,6 @@ const RedirectLogic = () => {
     }
   }, [user, myUser, getRedirectResult, navigate]);
 
-  // Mostrar un indicador de carga mientras se está cargando
   return loading ? (
     <Loading />
   ) : null;

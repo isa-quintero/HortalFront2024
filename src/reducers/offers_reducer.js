@@ -21,7 +21,6 @@ const offers_reducer = (state, action) => {
     return { ...state, offers_loading: true }
   }
   if (action.type === GET_OFFERS_SUCCESS) {
-    // Filtrar ofertas destacadas si es necesario
     const featured_offers = action.payload.filter(
       (offer) => offer.featured === true
     )
@@ -44,7 +43,6 @@ const offers_reducer = (state, action) => {
   }
   if (action.type === GET_SINGLE_OFFER_SUCCESS) {
     const offer = action.payload
-    // Asegurarse de que las fechas estén en el formato correcto
     offer.initialDate = new Date(offer.initialDate)
     offer.finalDate = new Date(offer.finalDate)
     return {

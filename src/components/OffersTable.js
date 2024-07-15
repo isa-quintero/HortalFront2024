@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useMagicContext } from '../context/magic_context';
 import axios from 'axios';
-import CultivoImage from '../assets/hero-bcg-2.jpg'; // Asegúrate de que la ruta sea correcta
+import CultivoImage from '../assets/hero-bcg-2.jpg';
 import { url_back } from '../utils/constants';
 
 const OffersTable = () => {
@@ -10,17 +10,14 @@ const OffersTable = () => {
   const [farmerId, setFarmerId] = useState(null);
   const [offers, setOffers] = useState([]);
   const [productNames, setProductNames] = useState({});
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [error, setError] = useState(null); 
 
-  // Solicitud para obtener farmerId
   useEffect(() => {
     const fetchFarmerId = async () => {
       try {
         const email = user.email;
-        const encodedEmail = encodeURIComponent(email);
-        console.log('Encoded email:', encodedEmail); // Log de depuración
-        const response = await axios.get(`${url_back}profiles/farmers-emails/${encodedEmail}`);
-        setFarmerId(response.data.idUser); // Ajusta esto según la estructura de tu respuesta
+        const response = await axios.get(`${url_back}profiles/farmers-emails/${email}`);
+        setFarmerId(response.data.idUser); 
         console.log('Fetched farmerId:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching farmerId:', error);
@@ -51,7 +48,6 @@ const OffersTable = () => {
     fetchProductNames();
   }, []);
 
-  // Solicitud para obtener las ofertas usando farmerId
   useEffect(() => {
     const fetchOffers = async () => {
       if (!farmerId) return;
@@ -60,7 +56,7 @@ const OffersTable = () => {
         console.log('Fetching offers for farmerId:', farmerId);
         const response = await axios.get(`${url_back}inventory/offers-farmers/${farmerId}`);
         setOffers(response.data);
-        setError(null); // Limpiar cualquier error previo si hay ofertas
+        setError(null);
         console.log('Fetched offers:', response.data);
       } catch (error) {
         console.error('Error fetching offers:', error);

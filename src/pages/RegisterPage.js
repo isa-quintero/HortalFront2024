@@ -12,8 +12,6 @@ const RegisterPage = () => {
     
     const updatedUser = { ...data, role: data.role, city: data.city, address: data.address, phone: data.phone };
     setUser(updatedUser);
-
-    // Redirigir a la página principal después de completar el formulario
     navigate('/');
   };
 

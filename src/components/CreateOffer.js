@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import Logo from '../assets/Logohortalsoft.png';
-import { url_back } from '../utils/constants';
+import { single_offer_url, single_product_url, url_back } from '../utils/constants';
 import { mintNFT } from '../utils/mintNFT';
 import { useMagicContext } from '../context/magic_context';
 
@@ -21,7 +21,7 @@ const CreateOffer = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get(`${url_back}inventory/products`)
+    axios.get(`${single_product_url}`)
       .then(response => {
         setProducts(response.data);
       })
@@ -34,7 +34,7 @@ const CreateOffer = () => {
     const fetchFarmerId = async () => {
       try {
         const response = await axios.get(`${url_back}profiles/farmers-emails/${user.email}`);
-        setFarmer(response.data.idUser); // Ajusta esto según la estructura de tu respuesta
+        setFarmer(response.data.idUser); 
         console.log('Fetched farmer:', response.data.idUser);
       } catch (error) {
         console.error('Error fetching farmer:', error);
@@ -73,7 +73,6 @@ const CreateOffer = () => {
     }
 
     try {
-      //const requestId = await mintNFT('0x87c63b5aa6e6dfc243a6c629c66bc4d2f473d9fb', parseInt(amount), user.publicAddress);
       
       const offerData = {
         productId: parseInt(productId),
@@ -87,7 +86,7 @@ const CreateOffer = () => {
         idBlockchain: 0,
       };
 
-      const response = await axios.post(`${url_back}inventory/offers`, offerData);
+      const response = await axios.post(`${single_offer_url}`, offerData);
       console.log('Oferta creada exitosamente:', response.data);
       setShowModal(true);
 
@@ -99,7 +98,7 @@ const CreateOffer = () => {
 
   const closeModalAndRedirect = () => {
     setShowModal(false);
-    window.location.href = '/'; // Redirige a la página de inicio
+    window.location.href = '/';
   };
 
   return (

@@ -77,7 +77,6 @@ export const OffersProvider = ({ children }) => {
         farmerUsername = farmer.city || farmerUsername;
       }
   
-      // Agregas el nombre del producto y la imagen al objeto singleOffer
       const offerWithDetails = {
         ...singleOffer,
         productName: productName,

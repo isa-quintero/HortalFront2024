@@ -24,7 +24,6 @@ const Nav = () => {
     linksToShow = links;
   }
 
-  // Verificar si estamos en la página de registro
   const isRegisterPage = location.pathname === '/register';
 
   return (

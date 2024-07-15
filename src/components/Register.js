@@ -36,7 +36,7 @@ const Register = () => {
       }
     };
     fetchData();
-    getRedirectResult(); // Obtener el resultado del redireccionamiento
+    getRedirectResult();
   }, [getRedirectResult]);
 
   const validateForm = useCallback(() => {
@@ -105,7 +105,7 @@ const Register = () => {
 
   const closeModalAndRedirect = () => {
     setShowModal(false);
-    window.location.href = '/'; // Redirige a la página de inicio
+    window.location.href = '/';
   };
 
   return (

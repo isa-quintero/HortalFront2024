@@ -69,10 +69,8 @@ const filter_reducer = (state, action) => {
       tempOffers = tempOffers.filter((offer) => offer.category === category);
     }
 
-    // filter by price
     tempOffers = tempOffers.filter((offer) => offer.price <= price);
 
-    // filter by shipping
     if (shipping) {
       tempOffers = tempOffers.filter((offer) => offer.shipping === true);
     }

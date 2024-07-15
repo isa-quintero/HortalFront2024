@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CultivoImage from '../assets/cultivo.jpg';
-import { url_back } from '../utils/constants';
+import { single_product_url, url_back } from '../utils/constants';
 import axios from 'axios';
 import { useMagicContext } from '../context/magic_context';
 
@@ -24,7 +24,6 @@ const CreatePriceRange = () => {
     const fetchAssociationId = async () => {
       try {
         const email = user.email;
-        console.log('Encoded email:', email); // Log de depuración
         const response = await axios.get(`${url_back}profiles/associations-emails/${email}`);
         setAssociationId(response.data.idUser); 
         console.log('Fetched associationId:', response.data.idUser);
@@ -39,7 +38,7 @@ const CreatePriceRange = () => {
       console.error('No user or user.email available');
     }
 
-    axios.get(`${url_back}inventory/products`)
+    axios.get(`${single_product_url}`)
       .then(response => {
         setProducts(response.data);
       })
@@ -101,11 +100,10 @@ const CreatePriceRange = () => {
 
     const closeModalAndRedirect = () => {
       setShowModal(false);
-      window.location.href = '/'; // Redirige a la página de inicio
+      window.location.href = '/'; 
     };
   
 
-  // Determinar si el botón debe estar deshabilitado
   const isDisabled = !productId || !price || !finalPrice || !initialDate || !finalDate || Object.values(errors).some(error => error !== '');
 
   return (

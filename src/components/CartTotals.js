@@ -4,6 +4,7 @@ import { useCartContext } from '../context/cart_context'
 import { useUserContext } from '../context/user_context'
 import { formatPrice } from '../utils/helpers'
 import { Link } from 'react-router-dom'
+import { OAuthLogin } from '../pages'
 const CartTotals = () => {
   const { total_amount, shipping_fee } = useCartContext()
   const { myUser, loginWithRedirect } = useUserContext()
@@ -18,7 +19,7 @@ const CartTotals = () => {
           
           <hr />
           <h4>
-            order total :<span>{formatPrice(total_amount)}</span>
+            total orden:<span>{formatPrice(total_amount)}</span>
           </h4>
         </article>
         {myUser ? (
@@ -26,9 +27,9 @@ const CartTotals = () => {
             proceder al pago
           </Link>
         ) : (
-          <button onClick={loginWithRedirect} className='btn'>
-            login
-          </button>
+          <Link to ='/login' className='btn'>
+            iniciar sesión 
+          </Link>
         )}
       </div>
     </Wrapper>

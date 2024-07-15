@@ -81,10 +81,6 @@ const SingleOfferPage = () => {
               <span>Fecha final:</span>
               {new Date(finalDate).toLocaleDateString()}
             </p>
-            <p className='info'>
-              <span>Vendido por:</span>
-              {farmerUsername}
-            </p>
             <hr />
             {amount > 0 && <AddToCart product={offer} />}
           </section>
